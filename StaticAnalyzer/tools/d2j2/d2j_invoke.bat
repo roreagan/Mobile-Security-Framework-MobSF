@@ -11,4 +11,4 @@ for %%X in ("%LIB%"\*.jar) do (
     set CP=!CP!%%X;
 )
 
-java -Xms512m -Xmx1024m -cp "%CP%" %*
+"C:/Program Files/Java/jdk1.8.0_144/bin/java" -Xms512m -Xmx1024m -cp "%CP%" %*

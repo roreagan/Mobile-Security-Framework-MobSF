@@ -56,6 +56,12 @@ def index(request):
     return render(request, template, context)
 
 
+def login(request):
+    context = {}
+    template = "general/login.html"
+    return render(request, template, context)
+
+
 def handle_uploaded_file(filecnt, typ):
     """
     Write Uploaded File

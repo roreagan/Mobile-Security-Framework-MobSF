@@ -20,6 +20,7 @@ from MobSF import utils
 urlpatterns = [
     # Examples:
     url(r'^$', MobSF.views.index),
+    url(r'^login/$', MobSF.views.login),
     url(r'^upload/$', MobSF.views.upload),
     url(r'^download/', MobSF.views.download),
     url(r'^about/$', MobSF.views.about),
