@@ -20,7 +20,20 @@ from MobSF import utils
 urlpatterns = [
     # Examples:
     url(r'^$', MobSF.views.index),
-    url(r'^login/$', MobSF.views.login),
+    url(r'^index/$', MobSF.views.index),
+    url(r'^samples/$', MobSF.views.samples),
+    url(r'^tasks/$', MobSF.views.task_html),
+    url(r'^up_task/$', MobSF.views.up_tasks),
+    url(r'^static_feature/$', MobSF.views.static_feature),
+    url(r'^script_feature/$', MobSF.views.script_feature),
+    url(r'^manual_analysis/$', MobSF.views.manual_analysis),
+
+    url(r'^upload_sample/$', MobSF.views.upload_sample),
+    url(r'^get_samples/$', MobSF.views.get_samples),
+    url(r'^upload_task/$', MobSF.views.upload_task),
+    url(r'^get_tasks/$', MobSF.views.get_tasks),
+    url(r'^report/$', MobSF.views.report),
+
     url(r'^upload/$', MobSF.views.upload),
     url(r'^download/', MobSF.views.download),
     url(r'^about/$', MobSF.views.about),

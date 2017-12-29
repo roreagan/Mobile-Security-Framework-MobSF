@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """
 Django settings for MobSF project.
 
@@ -44,13 +45,20 @@ MobSF_HOME = utils.getMobSFHome(USE_HOME)
 # Logs Directory
 LOG_DIR = os.path.join(MobSF_HOME, 'logs/')
 # Download Directory
-DWD_DIR = os.path.join(MobSF_HOME, 'downloads/')
+DWD_DIR = os.path.join(MobSF_HOME, 'static/img/downloads/')
 # Screenshot Directory
 SCREEN_DIR = os.path.join(MobSF_HOME, 'downloads/screen/')
 # Upload Directory
 UPLD_DIR = os.path.join(MobSF_HOME, 'uploads/')
 # Database Directory
 DB_DIR = os.path.join(MobSF_HOME, 'db.sqlite3')
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10242880
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10242880
+
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+BROKER_TRANSPORT = 'redis'
+
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -214,6 +222,7 @@ TEMPLATES = [
 ]
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'downloads/'),
 )
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/

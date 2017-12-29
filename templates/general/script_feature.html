@@ -1,0 +1,172 @@
+
+  {% extends "base2.html" %}
+
+      {% block css %}
+     <link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css" media="screen">
+    {% endblock %}
+
+   {% block content %}
+        <div class="header">
+            <h1 class="page-header">
+                静态特征漏洞 <small>查看和添加静态特征漏洞</small>
+            </h1>
+        </div>
+        <div id="page-inner">
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            漏洞特征上传
+                        </div>
+
+                        <div class="panel-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="vulFeature">漏洞特征</label>
+                                            <input type="text" class="form-control" id="vulFeature" placeholder="必填">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="vul">漏洞名称</label>
+                                            <input type="text" class="form-control" id="vul" placeholder="必填">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2 col-md-offset-1">
+                                        <div class="form-group">
+                                            <label></label>
+                                            <button type="submit" class="form-control btn btn-default" >提交漏洞</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            漏洞管理
+                        </div>
+
+                        <div class="panel-body">
+
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="search-name">名称</label>
+                                            <input type="text" class="form-control" id="search-name">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="search-type">类型</label>
+                                            <input type="text" class="form-control" id="search-type">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="dtp_input1">起始时间</label>
+                                            <div class="input-group date form_datetime" data-date-format="dd MM yyyy - HH:ii p" data-link-field="dtp_input1">
+                                                <input class="form-control" size="16" type="text" value="" readonly>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            </div>
+                                            <input type="hidden" id="dtp_input1" value="" /><br/>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="dtp_input2">终止时间</label>
+                                            <div class="input-group date form_datetime" data-date-format="dd MM yyyy - HH:ii p" data-link-field="dtp_input2">
+                                                <input class="form-control" size="16" type="text" value="" readonly>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            </div>
+                                            <input type="hidden" id="dtp_input2" value="" /><br/>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label></label>
+                                            <button type="submit" class="form-control btn btn-default" >搜索</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th> 编号</th>
+                                    <th> 漏洞名称</th>
+                                    <th> 漏洞特征</th>
+                                    <th> 添加时间</th>
+                                    <th> 删除</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Name1</td>
+                                    <td>Feature1</td>
+                                    <td>2017-12-14</td>
+                                    <td><a>删除</a></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Name2</td>
+                                    <td>Feature2</td>
+                                    <td>2017-12-14</td>
+                                    <td><a>删除</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /. PAGE INNER  -->
+    {% endblock %}
+
+
+  {% block js %}
+  <script src="assets/js/bootstrap-select.js"></script>
+  <script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+    $('.form_datetime').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        forceParse: 0,
+        showMeridian: 1
+    });
+    </script>
+  {% endblock %}

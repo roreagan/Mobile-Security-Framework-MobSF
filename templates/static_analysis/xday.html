@@ -100,242 +100,13 @@
         <!-- /.sidebar -->
       </aside>
 
-      <!-- Content Wrapper. Contains page content -->
+      <!-- Content Wrapper. Contains page content -- >
       <section class="content-wrapper">
         <!-- Content Header (Page header) -->
      
 
         <!-- Main content -->
         <div class="content body">
-
-<section id="information">
-  <h2 class="page-header"></h2>
-  <p class="lead">
-      <div class="row">
-    <div class="col-sm-2">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title">Icon</h3>
-          <span class="label label-primary pull-right"><i class="glyphicon glyphicon-picture"></i></span>
-        </div><!-- /.box-header -->
-        <div class="box-body center">
-            <img id="app_icon" src="
-            {% if icon_found %}
-                /download/{{ md5 }}-icon.png
-            {% else %}
-                {% static 'img/no_icon.png' %}
-            {% endif %}
-            "/><br />
-        {% if icon_hidden %}
-        <strong>Hidden Icon!</strong>
-        {% endif %}
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div><!-- /.col -->
-    <div class="col-sm-5">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title">File Information</h3>
-          <span class="label label-primary pull-right"><i class="glyphicon glyphicon-file"></i></span>
-        </div><!-- /.box-header -->
-        <div class="box-body">
-           <div class="list-group">
-                  <p>                                       
-                      <span class="label label-primary">Name</span>
-                      {{ name }}
-                  </p>
-                  <p>
-                      <span class="label label-primary">Size</span>
-                      {{ size }}
-                  </p>
-                  <p>
-                      <span class="label label-primary">MD5</span>
-                      {{ md5 }}
-                  </p>
-                  <p>
-                     <span class="label label-primary">SHA1</span>
-                      {{ sha1 }}                
-                  </p>
-                  <p>
-                     <span class="label label-primary">SHA256</span>
-                    {{ sha256 }}
-                </p>
-
-</section>
-        </div>
-
-        
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div><!-- /.col -->
-
-    <div class="col-sm-5">
-      <div class="box box-danger">
-        <div class="box-header with-border">
-          <h3 class="box-title">App Information</h3>
-          <span class="label label-danger pull-right"><i class="glyphicon glyphicon-info-sign"></i></span>
-        </div><!-- /.box-header -->
-        <div class="box-body">
-        <div class="list-group">
-                  <p>                                       
-                     <span class="label label-primary">Package Name</span>
-                     {{ packagename }}
-                  </p>
-                  <p>
-                     <span class="label label-primary">Main Activity</span>
-                    {{ mainactivity }}
-                  </p>
-                  <p>
-                     <span class="label label-primary">Target SDK</span>
-                     {{ targetsdk }}           
-                     <span class="label label-primary">Min SDK</span>
-                      {{ minsdk }}
-                     <span class="label label-primary">Max SDK</span>
-                     {{ maxsdk }}
-                  </p>
-                  <p>
-                     <span class="label label-primary">Android Version Name</span>
-                     {{ androvername }}
-                  </p>
-                  <p>
-                  <span class="label label-primary">Android Version Code</span>
-                  {{ androver }}
-                  </p>
-       </div>
-        
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div><!-- /.col -->
-    <!---Components-->
-  </div><!-- /.row -->
-      <!-- Small boxes (Stat box) -->
-      <div class="row">
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>{{ act_count }}</h3>
-
-              <p>ACTIVITIES</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-language"></i>
-            </div>
-            <a href="#activities" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>{{ serv_count }}</h3>
-
-              <p>SERVICES</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-gears"></i>
-            </div>
-            <a href="#services" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3>{{ bro_count }}</h3>
-
-              <p>RECEIVERS</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-sort-amount-desc"></i>
-            </div>
-            <a href="#receivers" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3>{{ prov_count }}</h3>
-
-              <p>PROVIDERS</p>
-            </div>
-            <div class="icon">
-              <i class="fa fa-database"></i>
-            </div>
-            <a href="#providers" class="small-box-footer">View <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-      </div>
-      <!-- /.row -->
- 
- <!--Exported Components-->
-<div class="row">
-
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-aqua"><i class="fa fa-language"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Exported </br>Activities</span>
-              <span class="info-box-number">{{ e_act }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-green"><i class="fa fa-gears"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Exported </br>Services</span>
-              <span class="info-box-number">{{ e_ser }}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-        <div class="clearfix visible-sm-block"></div>
-
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="fa fa-sort-amount-desc"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Exported </br>Receivers</span>
-              <span class="info-box-number">{{e_bro}}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon bg-red"><i class="fa fa-database"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Exported </br>Providers</span>
-              <span class="info-box-number">{{e_cnt}}</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-      </div>
- <!--End of Exported -->
-</section><!-- /#introduction -->
-
 
 <!-- ============================================================= -->
 
@@ -832,7 +603,7 @@
           <div class="box">
           <div class="box-header">
              <!-- /.box-header -->
-              <h3 class="box-title"><i class="fa  fa-dot-circle-o"></i>zip文件解压目录遍历漏洞分析</h3>
+              <h3 class="box-title"><i class="fa  fa-dot-circle-o"></i>zip文件解压目录遍历漏洞</h3>
             </div>
  <div class="box-body no-padding">
           <div class="table-responsive">
@@ -871,7 +642,7 @@
 
 
         </div><!-- /.content -->
-      </div><!-- /.content-wrapper -->
+      </section><!-- /.content-wrapper -->
 
        
 {% endblock %}

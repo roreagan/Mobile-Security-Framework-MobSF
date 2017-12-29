@@ -25,6 +25,8 @@ from MobSF.utils import (
     zipdir
 )
 
+from MobSF.models import Sample
+
 from StaticAnalyzer.models import StaticAnalyzerAndroid
 from StaticAnalyzer.views.shared_func import (
     file_size,
@@ -73,6 +75,143 @@ from MalwareAnalyzer.views import apkid_analysis
 def key(data, key_name):
     """Return the data for a key_name."""
     return data.get(key_name)
+
+
+def xday(id, checksum, rescan='0'):
+    """Do static analysis on an request and save to db."""
+    try:
+        # Input validation
+        sample = Sample.objects.get(MD5=checksum)
+
+        app_dic = {}
+        match = re.match('^[0-9a-f]{32}$', checksum)
+        app_dic['dir'] = settings.BASE_DIR  # BASE DIR
+        app_dic['app_name'] = sample.NAME  # APP ORGINAL NAME
+        app_dic['md5'] = checksum  # MD5
+        app_dic['app_dir'] = os.path.join(settings.UPLD_DIR, app_dic[
+            'md5'] + '/')  # APP DIRECTORY
+        app_dic['tools_dir'] = os.path.join(
+            app_dic['dir'], 'StaticAnalyzer/tools/')  # TOOLS DIR
+        # DWD_DIR = settings.DWD_DIR # not needed? Var is never used.
+        print "[INFO] Starting Analysis on : " + app_dic['app_name']
+
+        # Check if in DB
+        # pylint: disable=E1101
+        db_entry = StaticAnalyzerAndroid.objects.filter(
+            MD5=app_dic['md5'])
+        if not db_entry.exists() or rescan == '1':
+            app_dic['app_file'] = app_dic[
+                                      'md5'] + '.apk'  # NEW FILENAME
+            app_dic['app_path'] = app_dic['app_dir'] + \
+                                  app_dic['app_file']  # APP PATH
+
+            # ANALYSIS BEGINS
+            app_dic['size'] = str(
+                file_size(app_dic['app_path'])) + 'MB'  # FILE SIZE
+            app_dic['sha1'], app_dic[
+                'sha256'] = hash_gen(app_dic['app_path'])
+
+            app_dic['files'] = unzip(
+                app_dic['app_path'], app_dic['app_dir'])
+            app_dic['certz'] = get_hardcoded_cert_keystore(app_dic[
+                                                               'files'])
+
+            print "[INFO] APK Extracted"
+
+            # Manifest XML
+            app_dic['parsed_xml'] = get_manifest(
+                app_dic['app_dir'],
+                app_dic['tools_dir'],
+                '',
+                True
+            )
+
+            # Get icon
+            res_path = os.path.join(app_dic['app_dir'], 'res')
+            app_dic['icon_hidden'] = True
+            app_dic['icon_found'] = False  # Even if the icon is hidden, try to guess it by the default paths
+            app_dic['icon_path'] = ''
+            if os.path.exists(res_path):  # TODO: Check for possible different names for resource folder?
+                icon_dic = get_icon(app_dic['app_path'], res_path, app_dic['tools_dir'])
+                if icon_dic:
+                    app_dic['icon_hidden'] = icon_dic['hidden']
+                    app_dic['icon_found'] = bool(icon_dic['path'])
+                    app_dic['icon_path'] = icon_dic['path']
+
+            # Set Manifest link
+            app_dic['mani'] = '../ManifestView/?md5=' + \
+                              app_dic['md5'] + '&type=apk&bin=1'
+            man_data_dic = manifest_data(app_dic['parsed_xml'])
+
+            man_an_dic = manifest_analysis(
+                app_dic['parsed_xml'],
+                man_data_dic
+            )
+            bin_an_buff = []
+            bin_an_buff += elf_analysis(
+                app_dic['app_dir'],
+                "apk"
+            )
+            bin_an_buff += res_analysis(
+                app_dic['app_dir'],
+                "apk"
+            )
+            cert_dic = cert_info(
+                app_dic['app_dir'], app_dic['tools_dir'])
+            apkid_results = apkid_analysis(app_dic[
+                                               'app_dir'])
+            dex_2_jar(app_dic['app_path'], app_dic[
+                'app_dir'], app_dic['tools_dir'])
+            dex_2_smali(app_dic['app_dir'], app_dic['tools_dir'])
+            jar_2_java(app_dic['app_dir'], app_dic['tools_dir'])
+            code_an_dic = code_analysis(
+                app_dic['app_dir'],
+                man_an_dic['permissons'],
+                "apk"
+            )
+            print "\n[INFO] Generating Java and Smali Downloads"
+            gen_downloads(app_dic['app_dir'], app_dic['md5'], app_dic['icon_path'])
+
+            # Get the strings
+            app_dic['strings'] = strings(
+                app_dic['app_file'],
+                app_dic['app_dir'],
+                app_dic['tools_dir']
+            )
+            app_dic['zipped'] = '&type=apk'
+
+            print "\n[INFO] Connecting to Database"
+            try:
+                # SAVE TO DB
+                if rescan == '1':
+                    print "\n[INFO] Updating Database..."
+                    update_db_entry(
+                        app_dic,
+                        man_data_dic,
+                        man_an_dic,
+                        code_an_dic,
+                        cert_dic,
+                        bin_an_buff,
+                        apkid_results,
+                    )
+                elif rescan == '0':
+                    print "\n[INFO] Saving to Database"
+                    create_db_entry(
+                        app_dic,
+                        man_data_dic,
+                        man_an_dic,
+                        code_an_dic,
+                        cert_dic,
+                        bin_an_buff,
+                        apkid_results,
+                    )
+            except:
+                PrintException("[ERROR] Saving to Database Failed")
+
+        print "[INFO] Finishing Analysis on : " + app_dic['app_name']
+    except Exception as excep:
+        print excep
+
 
 
 def static_analyzer(request, api=False):

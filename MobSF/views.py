@@ -8,6 +8,10 @@ import shutil
 import platform
 import json
 import re
+import time
+import threading
+
+import tasks
 
 from wsgiref.util import FileWrapper
 from django.shortcuts import render
@@ -15,6 +19,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils import timezone
+from django.forms.models import model_to_dict
 from MobSF.utils import (
     print_n_send_error_response,
     PrintException,
@@ -22,7 +27,11 @@ from MobSF.utils import (
     isFileExists,
     api_key
 )
-from MobSF.models import RecentScansDB
+from MobSF.models import (
+    RecentScansDB,
+    Sample,
+    Task
+)
 from APITester.models import ScopeURLSandTests
 from StaticAnalyzer.models import (
     StaticAnalyzerAndroid,
@@ -30,7 +39,11 @@ from StaticAnalyzer.models import (
     StaticAnalyzerIOSZIP,
     StaticAnalyzerWindows,
 )
-from .forms import UploadFileForm
+from StaticAnalyzer.views.android.db_interaction import get_context_from_db_entry
+from .forms import (
+    UploadFileForm,
+    UploadTaskForm
+)
 
 
 def add_to_recent_scan(name, md5, url):
@@ -47,18 +60,68 @@ def add_to_recent_scan(name, md5, url):
         PrintException("[ERROR] Adding Scan URL to Database")
 
 
+def add_to_sample(name, type, source, extra, md5):
+    """
+    Add Entry to Database under Sample
+    """
+    try:
+        db_obj = Sample.objects.filter(MD5=md5)
+        if not db_obj.exists():
+            new_db_obj = Sample(
+                NAME=name, TYPE=type, SOURCE=source, EXTRA=extra, MD5=md5, TS=timezone.now())
+            new_db_obj.save()
+            return True
+        else:
+            return False
+    except:
+        PrintException("[ERROR] Adding Scan URL to Database")
+        return False
+
+
 def index(request):
     """
     Index Route
     """
+    # if not loginstatus.isLogin or time.time() - loginstatus.loginTime > 900:
+    #     return HttpResponseRedirect("/login")
     context = {'version': settings.MOBSF_VER}
-    template = "general/index.html"
+    template = "general/index_new.html"
     return render(request, template, context)
 
 
-def login(request):
-    context = {}
-    template = "general/login.html"
+def samples(request):
+    context = {'version': settings.MOBSF_VER}
+    template = "general/samples.html"
+    return render(request, template, context)
+
+
+def task_html(request):
+    context = {'version': settings.MOBSF_VER}
+    template = "general/tasks.html"
+    return render(request, template, context)
+
+
+def up_tasks(request):
+    context = {'version': settings.MOBSF_VER}
+    template = "dynamic_analysis/manual_analysis.html"
+    return render(request, template, context)
+
+
+def static_feature(request):
+    context = {'version': settings.MOBSF_VER}
+    template = "general/static_feature.html"
+    return render(request, template, context)
+
+
+def script_feature(request):
+    context = {'version': settings.MOBSF_VER}
+    template = "general/script_feature.html"
+    return render(request, template, context)
+
+
+def manual_analysis(request):
+    context = {'version': settings.MOBSF_VER}
+    template = "dynamic_analysis/manual_analysis.html"
     return render(request, template, context)
 
 
@@ -77,6 +140,153 @@ def handle_uploaded_file(filecnt, typ):
         for chunk in filecnt.chunks():
             destination.write(chunk)
     return md5sum
+
+
+def upload_sample(request, api=False):
+    """
+        Handle File Upload
+        """
+    response_data = {}
+    response_data['description'] = ''
+    response_data['status'] = 'error'
+    try:
+        if request.method == 'POST':
+            form = UploadFileForm(request.POST, request.FILES)
+            if form.is_valid():
+                file_type = request.FILES['file'].content_type
+                print "[INFO] MIME Type: " + file_type + " FILE: " + request.FILES['file'].name
+                if ((file_type in settings.APK_MIME) and
+                        request.FILES['file'].name.lower().endswith('.apk')):
+                    # APK
+                    md5 = handle_uploaded_file(request.FILES['file'], '.apk')
+                    response_data['status'] = 'success'
+                    response_data['description'] = '文件添加成功'
+                    if(add_to_sample(request.POST['name'], request.POST['type'], request.POST['source'],
+                                     request.POST['extra'], md5) is not True):
+                        response_data['description'] = '该文件已存在'
+                    print "\n[INFO] Storing Android APK"
+                else:
+                    response_data['description'] = 'File format not Supported!'
+                    response_data['status'] = 'error'
+                    print "\n[ERROR] File format not Supported!"
+
+            else:
+                response_data['description'] = 'Invalid Form Data!'
+                response_data['status'] = 'error'
+                print "\n[ERROR] Invalid Form Data!"
+        else:
+            response_data['description'] = 'Method not Supported!'
+            response_data['status'] = 'error'
+            print "\n[ERROR] Method not Supported!"
+    except:
+        PrintException("[ERROR] Uploading File:")
+    if response_data['status'] == 'error':
+        resp = HttpResponse(json.dumps(
+            response_data), content_type="application/json; charset=utf-8", status=500)
+    else:
+        resp = HttpResponse(json.dumps(response_data),
+                            content_type="application/json; charset=utf-8")
+    resp['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+def get_samples(request):
+    response_data = {}
+    response_data['status'] = 'success'
+    sampless = Sample.objects.all()
+    sams = []
+    for i in sampless:
+        temp = {}
+        temp['name'] = i.NAME
+        temp['type'] = i.TYPE
+        temp['source'] = i.SOURCE
+        temp['extra'] = i.EXTRA
+        temp['md5'] = i.MD5
+        temp['TS'] = '{}-{}-{} {}:{}:{}'.format(i.TS.year, i.TS.month, i.TS.day, i.TS.hour, i.TS.minute, i.TS.second)
+        sams.append(temp)
+    response_data['samples'] = sams
+    return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
+
+
+def get_tasks(reuqest):
+    response_data = {}
+    response_data['status'] = 'success'
+    tasks = Task.objects.all()
+    ts = []
+    for i in tasks:
+        temp = {}
+        temp['id'] = i.id
+        temp['name'] = i.NAME
+        temp['member'] = i.MEMBER
+        temp['sample'] = i.SAMPLEMD5
+        temp['engines'] = i.ENGINES
+        temp['progress'] = i.PROGRESS
+        temp['TS'] = '{}-{}-{} {}:{}:{}'.format(i.TS.year, i.TS.month, i.TS.day, i.TS.hour, i.TS.minute, i.TS.second)
+        if len(i.ENGINES.split(",")) == i.PROGRESS:
+            temp['addr'] = '<a href="../report/?taskId=' + str(i.id) + '">查看</a>'
+        else:
+            temp['addr'] = "--"
+        ts.append(temp)
+    response_data['tasks'] = ts
+    return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
+
+
+def upload_task(request):
+    """
+        Handle Task Upload
+        """
+    response_data = {}
+    response_data['description'] = ''
+    response_data['status'] = 'error'
+    try:
+        if request.method == 'POST':
+            form = UploadTaskForm(request.POST)
+            if form.is_valid():
+                db_obj = Sample.objects.filter(MD5=request.POST['sample'])
+                if db_obj.exists():
+                    task = Task(
+                        NAME=request.POST['name'], MEMBER=request.POST['member'], SAMPLEMD5=request.POST['sample'],
+                        ENGINES=request.POST['engines'], PROGRESS=0, TS=timezone.now())
+                    task.save()
+                    engines = request.POST['engines'].split(",")
+                    tasks.static_analysis.delay(task.id, task.SAMPLEMD5, engines)
+                    response_data['status'] = 'success'
+                    response_data['description'] = '任务添加成功'
+                    print "\n[INFO] Adding Task"
+            else:
+                response_data['description'] = 'Invalid Form Data!'
+                response_data['status'] = 'error'
+                print "\n[ERROR] Invalid Form Data!"
+        else:
+            response_data['description'] = 'Method not Supported!'
+            response_data['status'] = 'error'
+            print "\n[ERROR] Method not Supported!"
+    except:
+        PrintException("[ERROR] Uploading File:")
+    if response_data['status'] == 'error':
+        resp = HttpResponse(json.dumps(
+            response_data), content_type="application/json; charset=utf-8", status=500)
+    else:
+        resp = HttpResponse(json.dumps(response_data),
+                            content_type="application/json; charset=utf-8")
+    resp['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+def report(request):
+    taskid = request.GET['taskId']
+    task = Task.objects.get(id=taskid)
+    progress = task.PROGRESS
+    engines = task.ENGINES
+    if len(engines.split(",")) != progress:
+        HttpResponseRedirect('/tasks/')
+    else:
+            db_entry = StaticAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
+            context = {}
+            if db_entry.exists():
+                context = get_context_from_db_entry(db_entry)
+            template = "static_analysis/report.html"
+            return render(request, template, context)
 
 
 def upload(request, api=False):

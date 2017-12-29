@@ -86,7 +86,7 @@ def code_analysis(app_dir, perms, typ):
                     email_n_file.extend(emails_nf)
         # Domain Extraction and Malware Check
         print "[INFO] Performing Malware Check on extracted Domains"
-        domains = malware_check(list(set(url_list)))
+        # domains = malware_check(list(set(url_list)))
         print "[INFO] Finished Code Analysis, Email and URL Extraction"
         code_an_dic = {
             'api': api_findings,

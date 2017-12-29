@@ -18,14 +18,15 @@
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="/static/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="/static/js/ie-emulation-modes-warning.js"></script>
- <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+      <script src="/static/js/bootstrap.min.js"></script>
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  <script src="/static/js/dropzone.js"></script>
-<link rel="stylesheet" href="/static/css/dropzone.css">
+  <!--<script src="/static/js/dropzone.js"></script>-->
+<!--<link rel="stylesheet" href="/static/css/dropzone.css">-->
 </head>
 
   <body>
@@ -45,13 +46,6 @@
 
 
 <style>
-
-#dropzone { margin-bottom: 3rem; }
-
-.dropzone { border: 2px dashed #0087F7; border-radius: 5px; background: #F5F5F5; }
-.dropzone .dz-message { font-weight: 400; color: rgba(0, 0, 0, 0.6); font-size: 20px; font-style: italic;}
-.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }
-
 
 progress {
   width: 400px;
@@ -89,6 +83,10 @@ progress::-webkit-progress-value {
   100% {background-position: -100px 0px, 0 0, 0 0}
 }
 
+.controls {
+   color: black;
+  }
+
 </style>
 
   <!--<div class="inner cover">-->
@@ -112,41 +110,37 @@ progress::-webkit-progress-value {
   <!--&lt;!&ndash;<span class="glyphicon glyphicon-cloud-upload"></span>&ndash;&gt;-->
    <!--&lt;!&ndash;Upload &amp; Analyze&ndash;&gt;-->
   <!--&lt;!&ndash;</div>&ndash;&gt;-->
-  <!--&lt;!&ndash;<h4 id="status"></h4>&ndash;&gt;-->
+  <h4 id="status"></h4>
   <!--&lt;!&ndash;<progress id="progressBar" value="0" max="100" style="width:300px;visibility:hidden;" ></progress>&ndash;&gt;-->
 
 <!--&lt;!&ndash;</form>&ndash;&gt;-->
 <!--</div>-->
 
-
-          <div class="inner-cover">
-
-              <form class="form-horizontal">
+              <form class="form-horizontal" action="/checklogin/" method="get">
                   {% csrf_token %}
                 <div class="control-group">
-                    <label class="control-label" for="inputEmail">账&nbsp;&nbsp;号</label>
+                    <label class="control-label" for="inputAccount">账&nbsp;&nbsp;号</label>
                      <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="Email">
+                    <input type="text" id="inputAccount" placeholder="账号" name="account">
                     </div>
                 </div>
                 <div class="control-group">
                  <label class="control-label" for="inputPassword">密&nbsp;&nbsp;码</label>
                  <div class="controls">
-                 <input type="password" id="inputPassword" placeholder="Password">
+                 <input type="password" id="inputPassword" placeholder="密码" name="password">
                  </div>
                  </div>
                 <div class="control-group">
+                    <br>
                 <div class="controls">
-                 <button type="submit" class="btn">登&nbsp;&nbsp;陆</button>
+                 <button type="submit" class="btn" id="login">登&nbsp;&nbsp;陆</button>
                 </div>
                 </div>
                 </form>
 
             <div class="inner">
-              <h5><strong><a href="recent_scans">Recent Scans</a> | <a href="api_docs">API Docs</a>  | <a href="about">About</a></strong></h5></br>
              <p>&copy; {% now "Y" %}  Mobile Security Framework - MobSF {{ version }}. All Rights Reserved</p>
             </div>
-          </div>
         </div>
       </div>
     </div>
@@ -155,118 +149,17 @@ progress::-webkit-progress-value {
 function _(el){
   return document.getElementById(el);
 }
-function responseHandler (json, isbutton) {
 
-  if (json.status==='error')
-  {
-    _("status").innerHTML = json.description;
-  }
-  else if (json.status==='success')
-  {
-
-    i=1;
-    setInterval(function () {
-      dot='';
-      for (x=1;x<=i;x++)
-       {
-        dot+='.';
-       }
-       _("status").innerHTML = "Analyzing" +dot;
-       i+=1;
-       if(i==5)
-       {
-        i=1;
-       }
-    }, 2000);
-
-    window.location.href=window.location.href+json.url;
-  }
-}
-
-
- Dropzone.options.uploadWidget = {
-  paramName: 'file',
-  createImageThumbnails: false,
-  maxFilesize: 100, // MB
-  maxFiles: 8,
-  dictDefaultMessage: 'Drag files here or click Upload & Analyze',
-  acceptedFiles: '.apk,.ipa,.zip,.appx',
-
-  init: function() {
-    this.on('success', function( file, resp ){
-      //console.log( file );
-      console.log( resp );
-      responseHandler (resp);
-    });
-  },
-
-};
-
-
-$(document).ready(function ()
-{
-$('input[type=file]').change(function ()
-{
-  var val = $(this).val().toLowerCase();
-  var regex = new RegExp("(.*?)\.(ipa|apk|zip|appx)$");
-  val = val.replace(/^.*[\\\/]/, '');
-   try {
-        if (!(regex.test(val)))
-          {
-            $(this).val('');
-            _('status').innerHTML = "Please upload APK/IPA/ZIP/APPX only!";
-          }
-          else
-          {
-                _('status').innerHTML = "";
-                if (_("uploadFile").files.length === 0)
-                {
-                  return;
-                }
-                _("uploadFile").style.display= "none";
-                 _("but").style.display = "none";
-                var file = _("uploadFile").files[0];
-                _("progressBar").style.visibility = "visible";
-
-
-                var formdata = new FormData();
-                formdata.append("file", file);
-                var ajax = new XMLHttpRequest();
-
-                ajax.upload.addEventListener("progress", progressHandler, false);
-                ajax.addEventListener("load", completeHandler, false);
-                ajax.addEventListener("error", errorHandler, false);
-                ajax.addEventListener("abort", abortHandler, false);
-                ajax.open("POST", "../upload/");
-                ajax.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
-                ajax.send(formdata);
-          }
-
-      }
-      catch (e)
-      {
-          alert("Error:" + e);
-      }
-  });
-});
-function progressHandler(event){
-  var percent = (event.loaded / event.total) * 100;
-  console.log("Uploaded..."+Math.round(percent));
-  _("progressBar").value = Math.round(percent);
-  _("status").innerHTML = Math.round(percent)+"% Uploaded...";
-}
-function completeHandler(event)
-{
-
-  var json= JSON.parse(event.target.responseText);
-  responseHandler(json);
-}
 function errorHandler(event){
-  _("status").innerHTML = "Upload Failed!";
+  _("status").innerHTML = "账号或密码错误";
 }
 function abortHandler(event){
   _("status").innerHTML = "Upload Aborted!";
 }
+
+
+
+
 </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->

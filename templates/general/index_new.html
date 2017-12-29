@@ -1,0 +1,180 @@
+
+  {% extends "base2.html" %}
+   {% load staticfiles %}
+   {% block content %}
+        <div class="header">
+            <h1 class="page-header">
+                首页 <small>功能介绍和环境搭建</small>
+            </h1>
+        </div>
+        <div id="page-inner">
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            最近提交任务
+                        </div>
+
+                        <div class="panel-body">
+                            <table class="table table-bordered tasks">
+                                <thead>
+                                <tr>
+                                    <th> 编号</th>
+                                    <th> 任务名称</th>
+                                    <th> 测试人员</th>
+                                    <th> 任务添加时间</th>
+                                    <th> 测试引擎</th>
+                                    <th> 测试进度</th>
+                                    <th> 测试结果</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>分析海尔app</td>
+                                    <td>罗吕根</td>
+                                    <td>2017-12-14</td>
+                                    <td>代码安全检测, 数据安全检测</td>
+                                    <td> 未完成</td>
+                                    <td> --</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>静态分析摩拜app</td>
+                                    <td>罗吕根2</td>
+                                    <td>2017-12-14</td>
+                                    <td>代码安全检测, 数据安全检测</td>
+                                    <td> 已完成</td>
+                                    <td> <a href="report.html">查看</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            功能介绍
+                        </div>
+
+                        <div class="panel-body">
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;物联网智能设备控制软件安全检测工具是针对物联网智能设备控制软件测试人员而研发，集成逆向分析、网络抓包及web接口测试等开源工具，能够为物联网智能设备控制软件提供数据安全、代码安全、通信安全及业务逻辑安全测试的统一测试平台。</p>
+
+                            <br>
+                            <br>
+
+                            <div class="col-md-12">
+                                <div class="panel panel-success">
+                                    <div class="panel-heading">
+                                        样本管理
+                                    </div>
+
+                                    <div class="panel-body">
+                                        <p>样本管理能够对待测试的物联网智能设备控制软件进行统一管理，实现上传、搜索、查看、下载、删除物联网智能设备控制软件等功能。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        任务管理
+                                    </div>
+
+                                    <div class="panel-body">
+                                        <p>任务管理能够实现对测试任务的统一管理，通过新建任务，能够选择测试引擎的类型，其中包括是静态测试和人工测试，最终能够查看、下载静态检测运行结果，编辑或下载动态检测测试结果。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        漏洞管理
+                                    </div>
+
+                                    <div class="panel-body">
+                                        <p>漏洞管理包括静态漏洞和脚本漏洞两种类型，静态漏洞指的是代码及数据安全检测中，存在安全风险的静态规则。脚本漏洞是指的在人工分析的过程中，发现的通信安全及业务逻辑安全相关漏洞，该漏洞以脚本形式运行后能够复现相应漏洞。漏洞管理功能支持添加、查看、下载相应的漏洞库。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            环境搭建
+                        </div>
+
+                        <div class="panel-body">
+                            <p>本工具进行人工分析时将用到逆向工具及调试工具等如APKIDE 、adb、ID-GUI、IDA、Android Studio，burpsuit 、Wireshark、TCP dump等，需要提前安装并配置相应环境变量，具体环境配置说明将在人工分析界面进行详细介绍。</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+{% endblock %}
+
+
+  {% block js %}
+  <script src="/static/js/network.js"></script>
+  <script>
+      $("#main-menu").find("li").find("a").eq(0).addClass("active-menu");
+
+      function getEnginesName(names) {
+        engines = ["静态分析","敏感数据硬编码","数据库敏感数据泄露","配置数据篡改检测","资源文件篡改检测","数据库文件篡改检测",
+        "通信数据明文泄露检测","加密证书锁定安全漏洞分析","会话重放攻击检测","会话超时攻击检测","会话劫持安全漏洞分析","短信DOS检测",
+        "用户注册与登陆安全","设备配网安全检测","手机和云认证及通信加密检测","手机和设备认证及通信加密检测",
+        "设备和云认证及通信加密检测","固件升级安全检测","固件存储安全检测"];
+        es = names.split(",");
+        result = ""
+        for(var i = 0; i < es.length; i++) {
+            result += "," + engines[es[i]];
+        }
+        return result.slice(1);
+    }
+
+    function showProgress(i) {
+        es = i.engines.split(",");
+        if(i.progress === es.length) {
+            return "已完成";
+        } else {
+            return '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar"  aria-valuemin="0" aria-valuemax="100" style="min-width: 15%;width:'
+            + 1.0 * i.progress / es.length +
+            '%">' +  100.0 * i.progress / es.length  +'%</div></div>';
+        }
+    }
+
+      function refreshTasks() {
+        Network.connect("../get_tasks/", {"X-CSRFToken": '{{ csrf_token }}'}, function(data) {
+               $(".tasks").find("tbody").find("tr").remove();
+               for(var count = 0; count < data.tasks.length; count++) {
+                    no = count + 1;
+                    i = data.tasks[count]
+                    $(".tasks").find("tbody").append('<tr><th scope="row">' + no + '</th><td>' + i.name + '</td><td>' + i.member + '</td><td>' +
+                     i.TS + '</td><td>' + getEnginesName(i.engines) + '</td><td>' + showProgress(i) + '</td><td>' + i.addr + '</td></tr>');
+               }
+        });
+    }
+
+    refreshTasks();
+
+  </script>
+  {%endblock%}

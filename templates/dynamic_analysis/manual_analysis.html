@@ -1,0 +1,161 @@
+
+  {% extends "base2.html" %}
+
+   {% block content %}
+        <div class="header" id="topHeader">
+            <h1 class="page-header">
+                人工分析
+            </h1>
+        </div>
+        <div id="page-inner">
+
+            <div class="row" id="soVulDetect">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-cog"></i>&nbsp;&nbsp;数据泄露检测
+                        </div>
+
+                        <div class="panel-body">
+                            <p>
+                                <button type="button" class="btn btn-primary" id="leak_start">开始测试</button>
+                                <button type="button" class="btn btn-primary" id="leak_instruction">测试说明</button>
+                                <button type="button" class="btn btn-primary">编辑报告</button>
+                            </p>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">测试记录</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <p>该项未分析</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="javaCodeVul">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-file-text-o"></i>&nbsp;&nbsp;数据篡改类
+                        </div>
+
+                        <div class="panel-body">
+                            <p>数据篡改类测试</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="dataVul">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-file-text"></i>&nbsp;&nbsp;通信加密安全
+                        </div>
+
+                        <div class="panel-body">
+                            <p>通信加密安全测试.........</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="fileVul">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-file"></i>&nbsp;&nbsp;会话安全
+                        </div>
+
+                        <div class="panel-body">
+                            <p>会话安全测试.........</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modals">
+                <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" >数据泄露测试说明</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-3">数据泄露测试如何测</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">数据泄露测试项目1</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-3">测试项目1</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="leak_next1">Next</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="gridSystemModalLabel3">数据泄露测试项目2</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-3">测试项目2</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">结束</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -
+            </div>
+
+        </div>
+        <!-- /. PAGE INNER  -->
+    </div>
+    <!-- /. PAGE WRAPPER  -->
+</div>
+  {% endblock %}
+
+
+  {% block js %}
+    <script>
+    $("#leak_instruction").click(function () {
+        $("#modal1").modal('toggle');
+    });
+
+    $("#leak_start").click(function () {
+        $("#modal2").modal({backdrop: 'static', keyboard: false});
+    });
+
+    $("#leak_next1").click(function () {
+        $("#modal2").modal('toggle');
+        $("#modal3").modal({backdrop: 'static', keyboard: false});
+    });
+
+    </script>
+  {% endblock %}
