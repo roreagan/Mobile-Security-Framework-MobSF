@@ -47,7 +47,7 @@ LOG_DIR = os.path.join(MobSF_HOME, 'logs/')
 # Download Directory
 DWD_DIR = os.path.join(MobSF_HOME, 'static/img/downloads/')
 # Screenshot Directory
-SCREEN_DIR = os.path.join(MobSF_HOME, 'downloads/screen/')
+SCREEN_DIR = os.path.join(MobSF_HOME, 'static/img/downloads/screen/')
 # Upload Directory
 UPLD_DIR = os.path.join(MobSF_HOME, 'uploads/')
 # Database Directory
@@ -173,7 +173,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'testserver', '*', '10.10.28.112']
 # Application definition
 INSTALLED_APPS = (
-    #'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -222,7 +222,6 @@ TEMPLATES = [
 ]
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
-    os.path.join(BASE_DIR, 'downloads/'),
 )
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/

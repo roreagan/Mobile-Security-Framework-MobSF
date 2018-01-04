@@ -25,7 +25,10 @@ from MobSF.utils import (
     zipdir
 )
 
-from MobSF.models import Sample
+from MobSF.models import (
+    Sample,
+    Task
+)
 
 from StaticAnalyzer.models import StaticAnalyzerAndroid
 from StaticAnalyzer.views.shared_func import (
@@ -82,6 +85,7 @@ def xday(id, checksum, rescan='0'):
     try:
         # Input validation
         sample = Sample.objects.get(MD5=checksum)
+        task = Task.objects.get(id=id)
 
         app_dic = {}
         match = re.match('^[0-9a-f]{32}$', checksum)
@@ -93,7 +97,11 @@ def xday(id, checksum, rescan='0'):
         app_dic['tools_dir'] = os.path.join(
             app_dic['dir'], 'StaticAnalyzer/tools/')  # TOOLS DIR
         # DWD_DIR = settings.DWD_DIR # not needed? Var is never used.
-        print "[INFO] Starting Analysis on : " + app_dic['app_name']
+        print("[INFO] Starting Analysis on : " + app_dic['app_name'])
+        task.CONSOLES += '<br>' + "Starting Analysing Sample"
+        task.CONSOLES += "<br>" + "Sample Name: " + sample.NAME
+        task.CONSOLES += "<br>" + "Sample MD5: " + sample.MD5
+        task.save()
 
         # Check if in DB
         # pylint: disable=E1101
@@ -116,7 +124,9 @@ def xday(id, checksum, rescan='0'):
             app_dic['certz'] = get_hardcoded_cert_keystore(app_dic[
                                                                'files'])
 
-            print "[INFO] APK Extracted"
+            print("[INFO] APK Extracted")
+            task.CONSOLES += "<br>" + "Extracting APK..."
+            task.save()
 
             # Manifest XML
             app_dic['parsed_xml'] = get_manifest(
@@ -138,6 +148,8 @@ def xday(id, checksum, rescan='0'):
                     app_dic['icon_found'] = bool(icon_dic['path'])
                     app_dic['icon_path'] = icon_dic['path']
 
+            task.CONSOLES += "<br>" + "Analysing Mainfest"
+            task.save()
             # Set Manifest link
             app_dic['mani'] = '../ManifestView/?md5=' + \
                               app_dic['md5'] + '&type=apk&bin=1'
@@ -147,6 +159,10 @@ def xday(id, checksum, rescan='0'):
                 app_dic['parsed_xml'],
                 man_data_dic
             )
+
+            task.CONSOLES += "<br>" + "Analysing resources..."
+            task.save()
+
             bin_an_buff = []
             bin_an_buff += elf_analysis(
                 app_dic['app_dir'],
@@ -160,16 +176,24 @@ def xday(id, checksum, rescan='0'):
                 app_dic['app_dir'], app_dic['tools_dir'])
             apkid_results = apkid_analysis(app_dic[
                                                'app_dir'])
+
+            task.CONSOLES += "<br>" + "Getting jar and smali..."
+            task.save()
+
             dex_2_jar(app_dic['app_path'], app_dic[
                 'app_dir'], app_dic['tools_dir'])
             dex_2_smali(app_dic['app_dir'], app_dic['tools_dir'])
             jar_2_java(app_dic['app_dir'], app_dic['tools_dir'])
+
+            task.CONSOLES += "<br>" + "Analysing risks..."
+            task.save()
+
             code_an_dic = code_analysis(
                 app_dic['app_dir'],
                 man_an_dic['permissons'],
                 "apk"
             )
-            print "\n[INFO] Generating Java and Smali Downloads"
+            print("\n[INFO] Generating Java and Smali Downloads")
             gen_downloads(app_dic['app_dir'], app_dic['md5'], app_dic['icon_path'])
 
             # Get the strings
@@ -180,11 +204,11 @@ def xday(id, checksum, rescan='0'):
             )
             app_dic['zipped'] = '&type=apk'
 
-            print "\n[INFO] Connecting to Database"
+            print("\n[INFO] Connecting to Database")
             try:
                 # SAVE TO DB
                 if rescan == '1':
-                    print "\n[INFO] Updating Database..."
+                    print("\n[INFO] Updating Database...")
                     update_db_entry(
                         app_dic,
                         man_data_dic,
@@ -195,7 +219,7 @@ def xday(id, checksum, rescan='0'):
                         apkid_results,
                     )
                 elif rescan == '0':
-                    print "\n[INFO] Saving to Database"
+                    print("\n[INFO] Saving to Database")
                     create_db_entry(
                         app_dic,
                         man_data_dic,
@@ -205,13 +229,16 @@ def xday(id, checksum, rescan='0'):
                         bin_an_buff,
                         apkid_results,
                     )
+                task.CONSOLES += "<br>" + "Analysing Finished"
+                task.save()
             except:
                 PrintException("[ERROR] Saving to Database Failed")
-
-        print "[INFO] Finishing Analysis on : " + app_dic['app_name']
+        else:
+            task.CONSOLES += "<br>" + "Sample has been Analysed"
+            task.save()
+        print("[INFO] Finishing Analysis on : " + app_dic['app_name'])
     except Exception as excep:
-        print excep
-
+        print(excep)
 
 
 def static_analyzer(request, api=False):

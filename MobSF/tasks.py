@@ -17,3 +17,5 @@ def static_analysis(id, md5, engines):
             print "Chosen Engines don't exist!"
         task.PROGRESS = task.PROGRESS + 1
         task.save()
+    task.CONSOLES = ""
+    task.save()

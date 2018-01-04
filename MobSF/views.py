@@ -221,11 +221,9 @@ def get_tasks(reuqest):
         temp['sample'] = i.SAMPLEMD5
         temp['engines'] = i.ENGINES
         temp['progress'] = i.PROGRESS
+        temp['consoles'] = i.CONSOLES
         temp['TS'] = '{}-{}-{} {}:{}:{}'.format(i.TS.year, i.TS.month, i.TS.day, i.TS.hour, i.TS.minute, i.TS.second)
-        if len(i.ENGINES.split(",")) == i.PROGRESS:
-            temp['addr'] = '<a href="../report/?taskId=' + str(i.id) + '">查看</a>'
-        else:
-            temp['addr'] = "--"
+        temp['addr'] = '<a href="../report/?taskId=' + str(i.id) + '">查看</a>'
         ts.append(temp)
     response_data['tasks'] = ts
     return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
@@ -275,18 +273,26 @@ def upload_task(request):
 
 def report(request):
     taskid = request.GET['taskId']
-    task = Task.objects.get(id=taskid)
-    progress = task.PROGRESS
-    engines = task.ENGINES
-    if len(engines.split(",")) != progress:
-        HttpResponseRedirect('/tasks/')
-    else:
-            db_entry = StaticAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
-            context = {}
-            if db_entry.exists():
-                context = get_context_from_db_entry(db_entry)
-            template = "static_analysis/report.html"
-            return render(request, template, context)
+    try:
+        task = Task.objects.get(id=taskid)
+        db_entry = StaticAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
+        context = {}
+        if db_entry.exists():
+            context = get_context_from_db_entry(db_entry)
+        template = "static_analysis/report.html"
+        return render(request, template, context)
+    except:
+        return HttpResponseRedirect('/not_found')
+
+
+# def getTaskInfo(request):
+#     tasksid = request.GET['tasksId']
+#     response_data = {}
+#     for taskid in tasksid:
+#         task = Task.objects.get(id=taskid)
+#         if task.exists():
+#             response_data[taskid] = task.CONSOLES
+#     return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
 
 
 def upload(request, api=False):

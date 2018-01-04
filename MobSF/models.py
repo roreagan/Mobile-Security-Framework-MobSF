@@ -24,3 +24,4 @@ class Task(models.Model):
     ENGINES = models.TextField()
     PROGRESS = models.IntegerField()
     TS = models.DateTimeField()
+    CONSOLES = models.TextField(default="")

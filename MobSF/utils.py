@@ -52,7 +52,7 @@ def printMobSFverison():
     FindJava(True)
     FindVbox(True)
     adb_binary_or32bit_support()
-    check_update()
+    # check_update()
 
 
 def check_update():

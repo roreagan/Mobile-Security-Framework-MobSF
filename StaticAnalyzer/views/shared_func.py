@@ -359,6 +359,15 @@ def code_rule_matcher(findings, perms, data, file_path, code_rules):
                     if string_and_stat or (rule["string1"] in tmp_data):
                         add_findings(findings, rule[
                                      "desc"], file_path, rule["level"])
+                elif rule["match"] == 'string_and_nots':
+                    match_list = get_list_match_items(rule)
+
+                    if match_list[0] in tmp_data:
+                        for match in match_list[1:]:
+                            if match not in tmp_data:
+                                add_findings(findings, rule[
+                                    "desc"], file_path, rule["level"])
+                                break
                 elif rule["match"] == 'string_and_perm':
                     if (rule["perm"] in perms) and (rule["string1"] in tmp_data):
                         add_findings(findings, rule[

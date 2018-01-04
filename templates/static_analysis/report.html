@@ -14,7 +14,7 @@
      {% block content %}
         <div class="header">
             <h1 class="page-header">
-                XXX分析结果
+                {{name}}分析结果
             </h1>
         </div>
         <div id="page-inner">
@@ -111,88 +111,127 @@
                 </div><!-- /.col -->
             </div>
 
-            <div class="row" id="certInformation">
-                <h2 class="page-header"></h2>
-                <div class="box-header">
-                    <h3 class="box-title"><i class="fa fa-certificate"></i> 签名证书</h3>
-                </div>
-                 <pre class="hierarchy bring-up"><code class="language-bash" data-lang="bash">
-                    {{ certinfo | safe}}
-                    {% if issued == "good" %}
-                    <strong>Certicate Status: </strong><span class="label label-success">Good</span>
-                    {% elif issued == "bad" %}
-                    <strong>Certicate Status: </strong><span class="label label-danger">Bad</span>
-                    <strong>Description:</strong>App Signed by 'Android Debug' Certificate.
-                    Production ready applications should not be signed with 'Android Debug' Certificate.
-                    {% elif issued == "missing" %}
-                    <strong>Certicate Status: </strong><span class="label label-warning">Certificate not found</span>
-                    {% elif issued == "bad hash" %}
-                    <strong>Certicate Status: </strong><span class="label label-danger">Bad</span>
-                    <strong>Description:</strong>The app is signed with `SHA1withRSA`. SHA1 hash algorithm is known to have collision issues.
-                    {% endif %}
-                 </code></pre>
-            </div>
+            <div class="row">
 
-            <br><br>
-
-            <div class="row" id="soVulDetect">
                 <div class="col-md-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-cog"></i>&nbsp;&nbsp;so库漏洞检测
-                        </div>
 
                         <div class="panel-body">
-                            <p>so库漏洞检测结果.........</p>
+                            <div>
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-pills console-nav" role="tablist">
+                                    <li role="presentation" class="active"><a href="#static_report" role="tab" data-toggle="tab">静态分析</a></li>
+                                    <li role="presentation"><a href="#dynamic_report" role="tab" data-toggle="tab">人工分析</a></li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content console-content">
+                                    <div role="tabpanel" class="tab-pane active" id="static_report">
+
+                                        <div class="row" id="certInformation">
+                                            <section>
+                                            <h2 class="page-header"></h2>
+                                            <div class="box-header">
+                                                <h3 class="box-title"><i class="fa fa-certificate"></i> 签名证书</h3>
+                                            </div>
+                                             <pre class="hierarchy bring-up"><code class="language-bash" data-lang="bash">
+                                                {{ certinfo | safe}}
+                                                {% if issued == "good" %}
+                                                <strong>证书状态: </strong><span class="label label-success">Good</span>
+                                                {% elif issued == "bad" %}
+                                                <strong>证书状态: </strong><span class="label label-danger">Bad</span>
+                                                <strong>描述:</strong>App使用了'Android Debug'证书.
+                                                产品级的应用不应该使用'Android Debug'证书.
+                                                {% elif issued == "missing" %}
+                                                <strong>证书状态: </strong><span class="label label-warning">未找到证书</span>
+                                                {% elif issued == "bad hash" %}
+                                                <strong>证书状态: </strong><span class="label label-danger">Bad</span>
+                                                <strong>描述:</strong>应用使用`SHA1withRSA`算法签名. SHA1算法具有安全隐患.
+                                                {% endif %}
+                                             </code></pre>
+                                            </section>
+                                        </div>
+
+                                        <div class="row" id="soVulDetect">
+                                            <div class="col-md-12">
+                                                <section id="code">
+                                                   <h2 class="page-header"></h2>
+                                                   <!-- /.box -->
+
+                                                          <div class="box">
+                                                            <div class="box-header">
+                                                              <h3 class="box-title"><i class="fa  fa-code"></i> Code Analysis</h3>
+                                                            </div>
+                                                            <!-- /.box-header -->
+                                                            <div class="box-body no-padding">
+                                                             <div class="table-responsive">
+                                                                                    <table class="table table-bordered table-hover table-striped">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>ISSUE</th>
+                                                                                                <th>SEVERITY</th>
+                                                                        <th>FILES</th>
+
+                                                                                            </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                               {% for issue, details in findings.items %}
+                                                                  <tr>
+                                                                  <td>
+                                                                  {{ issue }}
+                                                                  </td>
+                                                                  <td>
+                                                                    {% if details|key:"level" == "high" %}
+                                                                      <span class="label label-danger">high</span>
+                                                                      {% elif details|key:"level" == "good" %}
+                                                                      <span class="label label-success">secure</span>
+                                                                      {% elif details|key:"level" == "warning" %}
+                                                                      <span class="label label-warning">warning</span>
+                                                                      {% elif details|key:"level" == "info" %}
+                                                                      <span class="label label-info">info</span>
+                                                                      {% endif %}
+                                                                  </td>
+                                                                  <td>
+                                                                  {% for path in details|key:"path" %}
+                                                                   <a href="../ViewSource/?file={{ path }}&md5={{ md5 }}&type=apk"> {{ path }}</a>
+                                                                  </br>
+                                                                  {% endfor %}
+                                                                  </td>
+                                                                </tr>
+                                                              {% endfor %}
+
+                                                                    </tbody>
+                                                                    </table>
+
+                                                                            </div>
+                                                            </div>
+                                                            <!-- /.box-body -->
+                                                          </div>
+                                                          <!-- /.box -->
+                                                </section>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div role="tabpanel" class="tab-pane" id="dynamic_report">
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="row" id="javaCodeVul">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-file-text-o"></i>&nbsp;&nbsp;java代码漏洞检测
-                        </div>
-
-                        <div class="panel-body">
-                            <p>java代码漏洞检测结果.........</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" id="dataVul">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-file-text"></i>&nbsp;&nbsp;数据泄露安全检测
-                        </div>
-
-                        <div class="panel-body">
-                            <p>数据泄露安全检测结果.........</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" id="fileVul">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-file"></i>&nbsp;&nbsp;文件检测安全
-                        </div>
-
-                        <div class="panel-body">
-                            <p>文件检测安全结果.........</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
 
          </div>
         <!-- /. PAGE INNER  -->
       {% endblock %}
+
+     {% block js %}
+
+     {% endblock %}

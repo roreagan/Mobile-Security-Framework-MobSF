@@ -449,6 +449,83 @@ RULES = [
         'level': 'good',
         'match': 'string_or',
         'input_case': 'exact'
-    }]
+    },
+    {
+        'desc': 'This App uses jar dynamic loading.',
+        'type': 'string',
+        'string1': 'getContextClassLoader',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App executes native code.',
+        'type': 'string',
+        'string1': 'java.runtime.exec',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App has in-process invoke.',
+        'type': 'regex',
+        'regex1': r'startActivity',
+        'regex2': 'new Intent\(\".*\"\)',
+        'level': 'warning',
+        'match': 'regex_and',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App may have Intent Scheme URL vulnerability',
+        'type': 'string',
+        'regex1': 'parseUri',
+        'regex2': 'Intent.addCategory("android.intent.category.BROWSABLE")',
+        'regex3': 'Intent.setComponent(null)',
+        'regex4': 'Intent.setSelector(null)',
+        'level': 'warning',
+        'match': 'string_and_nots',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App may open ports.',
+        'type': 'string',
+        'string1': 'ServerSocket',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App may leak file storage information.',
+        'type': 'string',
+        'string1': 'getExternalStorageDirectory',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App may leak clipboard information.',
+        'type': 'string',
+        'string1': 'ClipboardManager',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App may have Content Provider vulnerability.',
+        'type': 'string',
+        'string1': 'openFile',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+    {
+        'desc': 'This App may have ZIP catalog traverse.',
+        'type': 'string',
+        'string1': 'ZipInputStream',
+        'level': 'warning',
+        'match': 'single_string',
+        'input_case': 'exact'
+    },
+]
 
 
