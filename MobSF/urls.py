@@ -30,9 +30,13 @@ urlpatterns = [
 
     url(r'^upload_sample/$', MobSF.views.upload_sample),
     url(r'^get_samples/$', MobSF.views.get_samples),
+    url(r'^download_sample/$', MobSF.views.download_sample),
+    url(r'^delete_sample/$', MobSF.views.delete_sample),
     url(r'^upload_task/$', MobSF.views.upload_task),
     url(r'^get_tasks/$', MobSF.views.get_tasks),
     url(r'^report/$', MobSF.views.report),
+    url(r'^deleteTask/$', MobSF.views.deleteTask),
+    url(r'^getTaskInfo/$', MobSF.views.getTaskInfo),
 
     url(r'^upload/$', MobSF.views.upload),
     url(r'^download/', MobSF.views.download),

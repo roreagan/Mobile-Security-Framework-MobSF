@@ -44,7 +44,10 @@ from StaticAnalyzer.views.android.db_interaction import (
     create_db_entry,
 )
 
-from StaticAnalyzer.views.android.code_analysis import code_analysis
+from StaticAnalyzer.views.android.code_analysis import (
+    code_analysis,
+    code_analysis_task
+)
 from StaticAnalyzer.views.android.strings import strings
 from StaticAnalyzer.views.android.converter import (
     dex_2_jar,
@@ -188,10 +191,11 @@ def xday(id, checksum, rescan='0'):
             task.CONSOLES += "<br>" + "Analysing risks..."
             task.save()
 
-            code_an_dic = code_analysis(
+            code_an_dic = code_analysis_task(
                 app_dic['app_dir'],
                 man_an_dic['permissons'],
-                "apk"
+                "apk",
+                task
             )
             print("\n[INFO] Generating Java and Smali Downloads")
             gen_downloads(app_dic['app_dir'], app_dic['md5'], app_dic['icon_path'])
@@ -234,7 +238,7 @@ def xday(id, checksum, rescan='0'):
             except:
                 PrintException("[ERROR] Saving to Database Failed")
         else:
-            task.CONSOLES += "<br>" + "Sample has been Analysed"
+            task.CONSOLES += "<br>" + "静态分析已完成"
             task.save()
         print("[INFO] Finishing Analysis on : " + app_dic['app_name'])
     except Exception as excep:

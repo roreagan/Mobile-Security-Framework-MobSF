@@ -56,28 +56,28 @@
                                                     <option value="0">静态分析</option>
                                                 </optgroup>
                                                 <optgroup label="数据安全检测">
-                                                    <option value="1">敏感数据硬编码</option>
-                                                    <option value="2">数据库敏感数据泄露</option>
-                                                    <option value="3">配置数据篡改检测</option>
-                                                    <option value="4">资源文件篡改检测</option>
-                                                    <option value="5">数据库文件篡改检测</option>
+                                                    <option value="1" data-subtext="人工分析">敏感数据硬编码</option>
+                                                    <option value="2" data-subtext="人工分析">数据库敏感数据泄露</option>
+                                                    <option value="3" data-subtext="人工分析">配置数据篡改检测</option>
+                                                    <option value="4" data-subtext="人工分析">资源文件篡改检测</option>
+                                                    <option value="5" data-subtext="人工分析">数据库文件篡改检测</option>
                                                 </optgroup>
                                                 <optgroup label="通信安全检测">
-                                                    <option value="6">通信数据明文泄露检测</option>
-                                                    <option value="7">加密证书锁定安全漏洞分析</option>
-                                                    <option value="8">会话重放攻击检测</option>
-                                                    <option value="9">会话超时攻击检测</option>
-                                                    <option value="10">会话劫持安全漏洞分析</option>
-                                                    <option value="11">短信DOS检测</option>
+                                                    <option value="6" data-subtext="人工分析">通信数据明文泄露检测</option>
+                                                    <option value="7" data-subtext="人工分析">加密证书锁定安全漏洞分析</option>
+                                                    <option value="8" data-subtext="人工分析">会话重放攻击检测</option>
+                                                    <option value="9" data-subtext="人工分析">会话超时攻击检测</option>
+                                                    <option value="10" data-subtext="人工分析">会话劫持安全漏洞分析</option>
+                                                    <option value="11" data-subtext="人工分析">短信DOS检测</option>
                                                 </optgroup>
                                                 <optgroup label="业务逻辑安全">
-                                                    <option value="12">用户注册与登陆安全</option>
-                                                    <option value="13">设备配网安全检测</option>
-                                                    <option value="14">手机和云认证及通信加密检测</option>
-                                                    <option value="15">手机和设备认证及通信加密检测</option>
-                                                    <option value="16">设备和云认证及通信加密检测</option>
-                                                    <option value="17">固件升级安全检测</option>
-                                                    <option value="18">固件存储安全检测</option>
+                                                    <option value="12" data-subtext="人工分析">用户注册与登陆安全</option>
+                                                    <option value="13" data-subtext="人工分析">设备配网安全检测</option>
+                                                    <option value="14" data-subtext="人工分析">手机和云认证及通信加密检测</option>
+                                                    <option value="15" data-subtext="人工分析">手机和设备认证及通信加密检测</option>
+                                                    <option value="16" data-subtext="人工分析">设备和云认证及通信加密检测</option>
+                                                    <option value="17" data-subtext="人工分析">固件升级安全检测</option>
+                                                    <option value="18" data-subtext="人工分析">固件存储安全检测</option>
                                                 </optgroup>
                                             </select>
                                         </div>
@@ -178,6 +178,7 @@
                                     <th> 任务添加时间</th>
                                     <th> 测试引擎</th>
                                     <th> 测试结果</th>
+                                    <th> 操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -189,30 +190,30 @@
                 </div>
             </div>
 
-             <div class="row">
+             <!--<div class="row">-->
 
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            未完成任务详细进度
-                        </div>
+                <!--<div class="col-md-12">-->
+                    <!--<div class="panel panel-default">-->
+                        <!--<div class="panel-heading">-->
+                            <!--未完成任务详细进度-->
+                        <!--</div>-->
 
-                        <div class="panel-body">
-                            <div>
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-tabs console-nav" role="tablist">
-                                </ul>
+                        <!--<div class="panel-body">-->
+                            <!--<div>-->
+                                <!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
+                                <!--<ul class="nav nav-tabs console-nav" role="tablist">-->
+                                <!--</ul>-->
 
-                                <!-- Tab panes -->
-                                <div class="tab-content console-content">
-                                </div>
+                                <!--&lt;!&ndash; Tab panes &ndash;&gt;-->
+                                <!--<div class="tab-content console-content">-->
+                                <!--</div>-->
 
-                            </div>
+                            <!--</div>-->
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
 
             <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
                 <div class="modal-dialog" role="document">
@@ -321,27 +322,11 @@
                     no = count + 1;
                     i = data.tasks[count];
                     $(".tasks").find("tbody").append('<tr><th scope="row">' + no + '</th><td>' + i.name + '</td><td>' + i.member + '</td><td>' +
-                     i.TS + '</td><td>' + getEnginesName(i.engines) + '</td><td>' + i.addr + '</td></tr>');
+                     i.TS + '</td><td>' + getEnginesName(i.engines) + '</td><td>' + i.addr + '</td><td><a href="../deleteTask/?taskId='+ i.id +'">删除</a></td></tr>');
                      if(i.progress === i.engines.split(",").length) {
                         c++;
                      }
 
-                     if(i.consoles.length > 0) {
-                        tab = $("#console-" + i.id);
-                        if(tab.length !== 0) {
-                            tab.html("");
-                            tab.append(i.consoles);
-                        } else {
-                            $(".console-nav").append('<li role="presentation" class="console-li-'+ i.id+'"><a href="#console-'+ i.id +'"  role="tab" data-toggle="tab">' + i.name + '</a></li>');
-                            $(".console-content").append('<div role="tabpanel" class="tab-pane" id="console-'+ i.id+'" style="height: 200px;overflow-y: scroll"><br>' + i.consoles + '</div>')
-                        }
-                     } else {
-                        tab = $("#console-" + i.id);
-                        if(tab.length !== 0) {
-                            tab.remove();
-                            $(".console-li-" + i.id).remove();
-                        }
-                     }
                }
                if(c === data.tasks.length && window.timer != null) {
                     window.clearInterval(window.timer);

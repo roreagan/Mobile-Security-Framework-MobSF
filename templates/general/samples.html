@@ -321,7 +321,7 @@
                      i = data.samples[count];
                      $("#samples").find("tbody").append(
                      '<tr><th scope="row">' + no + '</th><td>' + i.name + '</td><td>' + i.type + '</td><td>' +
-                     i.source + '</td><td>' + i.TS + '</td><td>' + i.extra + '</td><td><a>下载</a>/<a>删除</a></td></tr>');
+                     i.source + '</td><td>' + i.TS + '</td><td>' + i.extra + '</td><td><a >下载</a>/<a href="../delete_sample/?md5=' + i.md5 +'">删除</a></td></tr>');
                 }
             }
         });

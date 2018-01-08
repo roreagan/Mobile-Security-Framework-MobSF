@@ -14,102 +14,10 @@
      {% block content %}
         <div class="header">
             <h1 class="page-header">
-                {{name}}分析结果
+                {{task_name}}分析结果
             </h1>
         </div>
         <div id="page-inner">
-
-
-            <div class="row" id="baseInformation">
-                <div class="col-sm-2">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">图标</h3>
-                            <span class="label label-primary pull-right"><i class="glyphicon glyphicon-picture"></i></span>
-                        </div>
-                        <div class="box-body center">
-                            <img id="app_icon" src="
-                                    /static/img/downloads/{{ md5 }}-icon.png
-                            "/><br />
-                            {% if icon_hidden %}
-                            <strong>Hidden Icon!</strong>
-                            {% endif %}
-                        </div><!-- /.box-body -->
-                    </div>
-                </div>
-
-                <div class="col-sm-5">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">样本文件信息 </h3>
-                            <span class="label label-primary pull-right"><i class="glyphicon glyphicon-file"></i></span>
-                        </div><!-- /.box-header -->
-                        <div class="box-body">
-                            <div class="list-group">
-                                <p>
-                                    <span class="label label-primary">名称</span>
-                                    {{ name }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">大小</span>
-                                    {{ size }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">MD5</span>
-                                    {{ md5 }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">SHA1</span>
-                                    {{ sha1 }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">SHA256</span>
-                                    {{ sha256 }}
-                                </p>
-                            </div>
-
-                        </div><!-- /.box-body -->
-                    </div><!-- /.box -->
-                </div><!-- /.col -->
-
-                <div class="col-sm-5">
-                    <div class="box box-danger">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">App信息</h3>
-                            <span class="label label-danger pull-right"><i class="glyphicon glyphicon-info-sign"></i></span>
-                        </div><!-- /.box-header -->
-                        <div class="box-body">
-                            <div class="list-group">
-                                <p>
-                                    <span class="label label-primary">Package Name</span>
-                                    {{ packagename }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">Main Activity</span>
-                                    {{ mainactivity }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">Target SDK</span>
-                                    {{ targetsdk }}
-                                    <span class="label label-primary">Min SDK</span>
-                                    {{ minsdk }}
-                                    <span class="label label-primary">Max SDK</span>
-                                    {{ maxsdk }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">Android Version Name</span>
-                                    {{ androvername }}
-                                </p>
-                                <p>
-                                    <span class="label label-primary">Android Version Code</span>
-                                    {{ androver }}
-                                </p>
-                            </div>
-
-                        </div><!-- /.box-body -->
-                    </div><!-- /.box -->
-                </div><!-- /.col -->
-            </div>
 
             <div class="row">
 
@@ -127,6 +35,106 @@
                                 <!-- Tab panes -->
                                 <div class="tab-content console-content">
                                     <div role="tabpanel" class="tab-pane active" id="static_report">
+                                        {% ifequal finish 1 %}
+                                        <br>
+                                        <div class="row" id="baseInformation">
+                                            <div class="col-sm-2">
+                                                <div class="box box-primary">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">图标</h3>
+                                                        <span class="label label-primary pull-right"><i class="glyphicon glyphicon-picture"></i></span>
+                                                    </div>
+                                                    <div class="box-body center">
+                                                        <img id="app_icon" src="
+                                                                /static/img/downloads/{{ md5 }}-icon.png
+                                                        "/><br />
+                                                        {% if icon_hidden %}
+                                                        <strong>Hidden Icon!</strong>
+                                                        {% endif %}
+                                                    </div><!-- /.box-body -->
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-5">
+                                                <div class="box box-primary">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">样本文件信息 </h3>
+                                                        <span class="label label-primary pull-right"><i class="glyphicon glyphicon-file"></i></span>
+                                                    </div><!-- /.box-header -->
+                                                    <div class="box-body">
+                                                        <div class="list-group">
+                                                            <p>
+                                                                <span class="label label-primary">名称</span>
+                                                                {{ name }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">大小</span>
+                                                                {{ size }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">MD5</span>
+                                                                {{ md5 }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">SHA1</span>
+                                                                {{ sha1 }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">SHA256</span>
+                                                                {{ sha256 }}
+                                                            </p>
+                                                        </div>
+
+                                                    </div><!-- /.box-body -->
+                                                </div><!-- /.box -->
+                                            </div><!-- /.col -->
+
+                                            <div class="col-sm-5">
+                                                <div class="box box-danger">
+                                                    <div class="box-header with-border">
+                                                        <h3 class="box-title">App信息</h3>
+                                                        <span class="label label-danger pull-right"><i class="glyphicon glyphicon-info-sign"></i></span>
+                                                    </div><!-- /.box-header -->
+                                                    <div class="box-body">
+                                                        <div class="list-group">
+                                                            <p>
+                                                                <span class="label label-primary">Package Name</span>
+                                                                {{ packagename }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">Main Activity</span>
+                                                                {{ mainactivity }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">Target SDK</span>
+                                                                {{ targetsdk }}
+                                                                <span class="label label-primary">Min SDK</span>
+                                                                {{ minsdk }}
+                                                                <span class="label label-primary">Max SDK</span>
+                                                                {{ maxsdk }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">Android Version Name</span>
+                                                                {{ androvername }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">Android Version Code</span>
+                                                                {{ androver }}
+                                                            </p>
+                                                            <p>
+                                                                <span class="label label-primary">是否加壳</span>
+                                                                {% ifequal shell 'true' %}
+                                                                True
+                                                                {% else %}
+                                                                False
+                                                                {% endifequal %}
+                                                            </p>
+                                                        </div>
+
+                                                    </div><!-- /.box-body -->
+                                                </div><!-- /.box -->
+                                            </div><!-- /.col -->
+                                        </div>
 
                                         <div class="row" id="certInformation">
                                             <section>
@@ -211,7 +219,23 @@
                                                 </section>
                                             </div>
                                         </div>
+                                        {% else %}
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        静态分析进度
+                                                    </div>
 
+                                                    <div class="panel-body">
+                                                        <div class="tab-pane" id="console-{{task_id}}" style="height: 350px;overflow-y: scroll; background-color: #3F3F3F; color:white">
+                                                            {{consoles}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endifequal %}
 
                                     </div>
 
@@ -233,5 +257,34 @@
       {% endblock %}
 
      {% block js %}
+    <script>
 
+        function refreshTask(){
+            $.ajax({
+                type: 'GET',
+                url: '../getTaskInfo/',
+                headers: {
+                    "X-CSRFToken": '{{ csrf_token }}',
+                },
+                data: {taskId: {{task_id}}},
+                error: function() {
+                    alert("网络错误!");
+                },
+                success: function(data) {
+                    if(data.finish === 1) {
+                        location.reload();
+                    } else {
+                        $("#console-{{task_id}}").html(data.consoles);
+                    }
+
+                }
+            });
+        }
+
+        if({{finish}} === 0) {
+            window.timer = window.setInterval(refreshTask ,5000);
+        }
+
+
+    </script>
      {% endblock %}

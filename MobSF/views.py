@@ -208,6 +208,21 @@ def get_samples(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
 
 
+def download_sample(request):
+
+    return
+
+
+def delete_sample(request):
+    try:
+        Sample.objects.get(MD5=request.GET['md5']).delete()
+        Task.objects.filter(SAMPLEMD5=request.GET['md5']).delete()
+        StaticAnalyzerAndroid.objects.filter(MD5=request.GET['md5']).delete()
+        return samples(request)
+    except:
+        return HttpResponseRedirect('/not_found')
+
+
 def get_tasks(reuqest):
     response_data = {}
     response_data['status'] = 'success'
@@ -221,7 +236,6 @@ def get_tasks(reuqest):
         temp['sample'] = i.SAMPLEMD5
         temp['engines'] = i.ENGINES
         temp['progress'] = i.PROGRESS
-        temp['consoles'] = i.CONSOLES
         temp['TS'] = '{}-{}-{} {}:{}:{}'.format(i.TS.year, i.TS.month, i.TS.day, i.TS.hour, i.TS.minute, i.TS.second)
         temp['addr'] = '<a href="../report/?taskId=' + str(i.id) + '">查看</a>'
         ts.append(temp)
@@ -271,6 +285,16 @@ def upload_task(request):
     return resp
 
 
+def deleteTask(request):
+    taskid = request.GET['taskId']
+    try:
+        task = Task.objects.get(id=taskid)
+        task.delete()
+        return task_html(request)
+    except:
+        return HttpResponseRedirect('/not_found')
+
+
 def report(request):
     taskid = request.GET['taskId']
     try:
@@ -279,20 +303,39 @@ def report(request):
         context = {}
         if db_entry.exists():
             context = get_context_from_db_entry(db_entry)
+            context['finish'] = 1
+            context['shell'] = 'false' if "Activity" in context['mainactivity'] else 'true'
+
+        else:
+            context['finish'] = 0
+            context['consoles'] = task.CONSOLES
+        context['task_name'] = task.NAME
+        context['task_id'] = task.id
         template = "static_analysis/report.html"
         return render(request, template, context)
     except:
         return HttpResponseRedirect('/not_found')
 
 
-# def getTaskInfo(request):
-#     tasksid = request.GET['tasksId']
-#     response_data = {}
-#     for taskid in tasksid:
-#         task = Task.objects.get(id=taskid)
-#         if task.exists():
-#             response_data[taskid] = task.CONSOLES
-#     return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
+def getTaskInfo(request):
+    response_data = {}
+    taskid = request.GET['taskId']
+    try:
+        task = Task.objects.get(id=taskid)
+        db_entry = StaticAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
+        if db_entry.exists():
+            response_data['finish'] = 1
+        else:
+            response_data['finish'] = 0
+            response_data['consoles'] = task.CONSOLES
+        response_data['task_name'] = task.NAME
+        response_data['task_id'] = task.id
+        response_data['status'] = 'success'
+        return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
+    except:
+        response_data['status'] = 'error'
+        return HttpResponse(json.dumps({}), content_type="application/json; charset=utf-8")
+
 
 
 def upload(request, api=False):

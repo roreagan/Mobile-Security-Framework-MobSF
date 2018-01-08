@@ -1,3 +1,4 @@
+# -*- coding: utf_8 -*-
 """
 Rule Format
 
@@ -451,7 +452,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App uses jar dynamic loading.',
+        'desc': '应用动态加载了Jar.',
         'type': 'string',
         'string1': 'getContextClassLoader',
         'level': 'warning',
@@ -459,7 +460,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App executes native code.',
+        'desc': '应用会执行native code.',
         'type': 'string',
         'string1': 'java.runtime.exec',
         'level': 'warning',
@@ -467,7 +468,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App has in-process invoke.',
+        'desc': '应用存在进程间调用.',
         'type': 'regex',
         'regex1': r'startActivity',
         'regex2': 'new Intent\(\".*\"\)',
@@ -475,19 +476,19 @@ RULES = [
         'match': 'regex_and',
         'input_case': 'exact'
     },
+    # {
+    #     'desc': '应用可能存在Intent Scheme URL漏洞',
+    #     'type': 'string',
+    #     'regex1': 'parseUri',
+    #     'regex2': 'Intent.addCategory("android.intent.category.BROWSABLE")',
+    #     'regex3': 'Intent.setComponent(null)',
+    #     'regex4': 'Intent.setSelector(null)',
+    #     'level': 'warning',
+    #     'match': 'string_and_nots',
+    #     'input_case': 'exact'
+    # },
     {
-        'desc': 'This App may have Intent Scheme URL vulnerability',
-        'type': 'string',
-        'regex1': 'parseUri',
-        'regex2': 'Intent.addCategory("android.intent.category.BROWSABLE")',
-        'regex3': 'Intent.setComponent(null)',
-        'regex4': 'Intent.setSelector(null)',
-        'level': 'warning',
-        'match': 'string_and_nots',
-        'input_case': 'exact'
-    },
-    {
-        'desc': 'This App may open ports.',
+        'desc': '应用可能存在开放端口.',
         'type': 'string',
         'string1': 'ServerSocket',
         'level': 'warning',
@@ -495,7 +496,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App may leak file storage information.',
+        'desc': '应用可能泄露文件存储信息.',
         'type': 'string',
         'string1': 'getExternalStorageDirectory',
         'level': 'warning',
@@ -503,7 +504,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App may leak clipboard information.',
+        'desc': '应用可能泄露剪切板信息.',
         'type': 'string',
         'string1': 'ClipboardManager',
         'level': 'warning',
@@ -511,7 +512,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App may have Content Provider vulnerability.',
+        'desc': '应用可能存在Content Provider漏洞.',
         'type': 'string',
         'string1': 'openFile',
         'level': 'warning',
@@ -519,7 +520,7 @@ RULES = [
         'input_case': 'exact'
     },
     {
-        'desc': 'This App may have ZIP catalog traverse.',
+        'desc': '应用可能存在Zip文件解压目录遍历漏洞.',
         'type': 'string',
         'string1': 'ZipInputStream',
         'level': 'warning',
