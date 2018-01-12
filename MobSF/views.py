@@ -30,7 +30,8 @@ from MobSF.utils import (
 from MobSF.models import (
     RecentScansDB,
     Sample,
-    Task
+    Task,
+    # User
 )
 from APITester.models import ScopeURLSandTests
 from StaticAnalyzer.models import (
@@ -39,11 +40,15 @@ from StaticAnalyzer.models import (
     StaticAnalyzerIOSZIP,
     StaticAnalyzerWindows,
 )
+from DynamicAnalyzer.models import ManualAnalyzerAndroid
 from StaticAnalyzer.views.android.db_interaction import get_context_from_db_entry
 from .forms import (
     UploadFileForm,
     UploadTaskForm
 )
+
+from context import generate_dynamic_html
+
 
 
 def add_to_recent_scan(name, md5, url):
@@ -82,11 +87,50 @@ def index(request):
     """
     Index Route
     """
-    # if not loginstatus.isLogin or time.time() - loginstatus.loginTime > 900:
-    #     return HttpResponseRedirect("/login")
-    context = {'version': settings.MOBSF_VER}
-    template = "general/index_new.html"
-    return render(request, template, context)
+    is_login = request.session.get('IS_LOGIN', False)
+    if is_login:
+        username = request.session.get('USRNAME', False)
+        return render(request, 'general/index_new.html', {'username': username, 'version': settings.MOBSF_VER})
+    else:
+        return HttpResponseRedirect('/login/')
+
+
+def loginVerify(request):
+    if request.method == 'POST':
+        #获取表单用户密码
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+
+        if username == "admin":
+
+            if "admin" == password:
+                request.session['IS_LOGIN'] = True
+                request.session['USRNAME'] = username
+                return HttpResponse('1')
+            else:
+            #比较失败，还在login
+                return HttpResponse('0')
+        else:
+            return HttpResponse('0')
+    else:
+        return render(request, 'general/login_new.html', {'version': settings.MOBSF_VER})
+
+
+def login(request):
+    is_login = request.session.get('IS_LOGIN', False)
+    if is_login:
+        username = request.session.get('USRNAME', False)
+        return render(request, 'general/index_new.html', {'username': username, 'version': settings.MOBSF_VER})
+    else:
+        context = {'version': settings.MOBSF_VER}
+        template = "general/login_new.html"
+        return render(request, template, context)
+
+
+def logout(request):
+    request.session['IS_LOGIN'] = False
+    request.session['USRNAME'] = ''
+    return HttpResponseRedirect('/login/')
 
 
 def samples(request):
@@ -139,6 +183,7 @@ def handle_uploaded_file(filecnt, typ):
     with open(anal_dir + md5sum + typ, 'wb+') as destination:
         for chunk in filecnt.chunks():
             destination.write(chunk)
+    shutil.copy(anal_dir + md5sum + typ, settings.DWD_DIR + md5sum + typ)
     return md5sum
 
 
@@ -208,11 +253,6 @@ def get_samples(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json; charset=utf-8")
 
 
-def download_sample(request):
-
-    return
-
-
 def delete_sample(request):
     try:
         Sample.objects.get(MD5=request.GET['md5']).delete()
@@ -260,6 +300,11 @@ def upload_task(request):
                         NAME=request.POST['name'], MEMBER=request.POST['member'], SAMPLEMD5=request.POST['sample'],
                         ENGINES=request.POST['engines'], PROGRESS=0, TS=timezone.now())
                     task.save()
+                    dy_entry = ManualAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
+                    if not dy_entry.exists():
+                        dynamic = ManualAnalyzerAndroid(MD5=request.POST['sample'])
+                        dynamic.save()
+
                     engines = request.POST['engines'].split(",")
                     tasks.static_analysis.delay(task.id, task.SAMPLEMD5, engines)
                     response_data['status'] = 'success'
@@ -295,16 +340,31 @@ def deleteTask(request):
         return HttpResponseRedirect('/not_found')
 
 
+#  FUCK THE SHITTING ARCHITECTURE!!!!!!
 def report(request):
     taskid = request.GET['taskId']
     try:
         task = Task.objects.get(id=taskid)
         db_entry = StaticAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
+        dy_entry = ManualAnalyzerAndroid.objects.filter(MD5=task.SAMPLEMD5)
         context = {}
         if db_entry.exists():
             context = get_context_from_db_entry(db_entry)
             context['finish'] = 1
             context['shell'] = 'false' if "Activity" in context['mainactivity'] else 'true'
+            context['engines'] = task.ENGINES.split(",")
+            engines = task.ENGINES.split(",")
+            context['html'] = ""
+            context['modal'] = ""
+            context['js'] = ""
+            context['md5'] = task.SAMPLEMD5
+            for engine in engines:
+                if engine == '0':
+                    continue
+                html, modal, js = generate_dynamic_html(engine, dy_entry[0])
+                context['html'] += html
+                context['modal'] += modal
+                context['js'] += js
 
         else:
             context['finish'] = 0
@@ -313,7 +373,8 @@ def report(request):
         context['task_id'] = task.id
         template = "static_analysis/report.html"
         return render(request, template, context)
-    except:
+    except Exception as e:
+        print(str(e))
         return HttpResponseRedirect('/not_found')
 
 

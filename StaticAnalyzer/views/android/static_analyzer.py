@@ -238,7 +238,7 @@ def xday(id, checksum, rescan='0'):
             except:
                 PrintException("[ERROR] Saving to Database Failed")
         else:
-            task.CONSOLES += "<br>" + "静态分析已完成"
+            task.CONSOLES += "<br>" + "Analysing Finished!"
             task.save()
         print("[INFO] Finishing Analysis on : " + app_dic['app_name'])
     except Exception as excep:

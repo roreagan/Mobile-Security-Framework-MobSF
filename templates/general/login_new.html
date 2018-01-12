@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>物联网智能设备控制软件安全检测工具-登录</title>
+	<script src='/static/js/jquery-1.8.3.js'></script>
+    <style>
+        body {
+            background-color: #333;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .login {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background-color: #fff;
+            overflow: hidden;
+            width: 18rem;
+            height: 18rem;
+            padding: 1rem;
+            border-radius: 2rem;
+            margin: -10rem 0 0 -10rem;
+        }
+
+        .login:hover  .login1, .login.focused .login1 {
+            width: 3rem;
+        }
+
+        .login:hover  .login1 .loginname .name1, .login.focused .login1 .loginname .name1 {
+            font-size: 1rem;
+            width: 20rem;
+            margin-left: -10.1rem;
+            margin-top: 7.75rem;
+            transform: rotate(-90deg);
+
+        }
+
+        .login:hover  .login1 .loginname .name2, .login.focused .login1 .loginname .name2{
+            display: none;
+        }
+
+        .login.loading .login1 {
+            width: 20rem;
+        }
+
+        .login.loading .login1 .loginname {
+            display: none;
+        }
+
+        .login1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20rem;
+            height: 20rem;
+            z-index: 1;
+            background-color: #F09B22;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .login1 .loginname {
+            font-size: 4rem;
+            text-align: center;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .name1 {
+            font-size: 1.4rem;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .name2 {
+            margin-top: 0rem;
+        }
+
+        .loginform {
+            margin-left: 4rem;
+            padding: 0.7rem;
+        }
+
+        .logininput {
+            width: 100%;
+            font-size: 1.5rem;
+            border-color: #eee;
+            border-width: 0 0 2px 0;
+            padding-left: 0.7rem;
+            padding-top: 1.5rem;
+        }
+
+        .logininput:focus {
+            outline: none;
+            border-bottom-color: #F09B22;
+        }
+
+        .loginbtn {
+            position: absolute;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            width: 6rem;
+            height: 6rem;
+            border: none;
+            color: #fff;
+            background: #F09B22;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            border: 0.6rem solid transparent;
+            transition: all 0.3s ease-in-out;
+            font-weight: bold;
+        }
+
+        .loginbtn:hover, .loginbtn:focus, .loginbtn:active {
+            background: #fff;
+            border-color: #F09B22;
+            outline: none;
+            color: #F09B22;
+        }
+
+        .loadEffect {
+            width: 12rem;
+            height: 12rem;
+            position: relative;
+            margin: 0 auto;
+            margin-top: 4rem;
+        }
+
+        .loadEffect span {
+            display: inline-block;
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 50%;
+            background: #FFEC23;
+            position: absolute;
+            -webkit-animation: load 1.04s ease infinite;
+        }
+
+        @-webkit-keyframes load{
+            0%{
+                opacity: 1;
+            }
+            100%{
+                opacity: 0.2;
+            }
+        }
+
+        #loginError{
+            color: #CC3E32;
+        }
+
+        .loadEffect span:nth-child(1){
+            left: 0;
+            top: 50%;
+            margin-top:-0.5rem;
+            -webkit-animation-delay:0.13s;
+        }
+
+        .loadEffect span:nth-child(2){
+            left: 1.5rem;
+            top: 1.5rem;
+            -webkit-animation-delay:0.26s;
+        }
+
+        .loadEffect span:nth-child(3){
+            left: 50%;
+            top: 0;
+            margin-left: -0.5rem;
+            -webkit-animation-delay:0.39s;
+        }
+
+        .loadEffect span:nth-child(4){
+            top: 1.5rem;
+            right:1.5rem;
+            -webkit-animation-delay:0.52s;
+        }
+
+        .loadEffect span:nth-child(5){
+            right: 0;
+            top: 50%;
+            margin-top:-0.5rem;
+            -webkit-animation-delay:0.65s;
+        }
+
+        .loadEffect span:nth-child(6){
+            right: 1.5rem;
+            bottom:1.5rem;
+            -webkit-animation-delay:0.78s;
+        }
+
+        .loadEffect span:nth-child(7){
+            bottom: 0;
+            left: 50%;
+            margin-left: -0.5rem;
+            -webkit-animation-delay:0.91s;
+        }
+
+        .loadEffect span:nth-child(8){
+            bottom: 1.5rem;
+            left: 1.5rem;
+            -webkit-animation-delay:1.04s;
+        }
+    </style>
+
+
+</head>
+<body>
+
+	<div class="login">
+		<div class="login1">
+			<div class="loginname">
+				<p class="name1">物联网智能设备控制软件安全检测工具</p>
+				<p class="name2">LOGIN</p>
+			</div>
+			<div class="loader">
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+		<form class="loginform">
+			<input class="logininput" id="username" type="text" name="username" placeholder="用户名">
+			<input class="logininput" id="password" type="password" name="password" placeholder="密码">
+            <p id="loginError"></p>
+
+
+			<button class="loginbtn" type="submit" >LOGIN</button>
+
+		</form>
+
+    </div>
+
+</body>
+<script>
+
+    $('.logininput').on('focus', function() {
+        $('.login').addClass('focused');
+    });
+
+
+    $('.login').submit(
+        function(){
+            var username = $('#username').val();
+            var password = $('#password').val();
+            $('#loginError').html(' ').show();
+            if(username == "" || username == null  ){
+                $('#loginError').html('用户名不符合规范').show();
+                return false;
+            }
+            if(password == "" || password == null){
+                $('#loginError').html('密码不符合规范').show();
+                return false;
+            }
+            var formData = new FormData();
+            formData.append("username", username);
+            formData.append("password", password);
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            $.ajax({
+                type:"POST",
+                url: '/loginVerify/',
+                headers:{"X-CSRFToken": '{{ csrf_token }}' ,},
+                data: formData,
+                processData:false,
+                contentType:false,
+                success: function(data) {
+                    if(data != 0 ){
+                        $('.login').removeClass('focused').addClass('loading');
+                        setTimeout(function(){
+                            $('.loader').addClass('loadEffect');
+                        },370);
+                        setTimeout(function(){
+                           location.href = '/index/';
+                        },2000);
+
+                    }
+                    if(data == 0 ){
+                        $('#loginError').html('用户名不存在或者用户名密码不匹配').show();
+                    }
+                },
+                error: function() {
+                    $('#loginError').html('请求失败，请刷新页面后重试').show();
+                }
+            });
+            return false;
+        });
+
+</script>
+</html>

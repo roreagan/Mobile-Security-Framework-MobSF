@@ -25,3 +25,8 @@ class Task(models.Model):
     PROGRESS = models.IntegerField()
     TS = models.DateTimeField()
     CONSOLES = models.TextField(default="")
+
+
+# class User(models.Model):
+#     USERNAME = models.TextField()
+#     PASSWORD = models.TextField()

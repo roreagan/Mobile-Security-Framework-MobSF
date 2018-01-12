@@ -105,7 +105,8 @@ ALLOWED_EXTENSIONS = {
     ".txt": "text/plain",
     ".png": "image/png",
     ".zip": "application/zip",
-    ".tar": "application/x-tar"
+    ".tar": "application/x-tar",
+    ".apk": "application/application/octet-stream"
 }
 #===============================================
 

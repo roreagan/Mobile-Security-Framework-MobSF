@@ -20,13 +20,7 @@
     <script src="/static/js/ie-emulation-modes-warning.js"></script>
     <script src="/static/js/jquery.min.js"></script>
       <script src="/static/js/bootstrap.min.js"></script>
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  <!--<script src="/static/js/dropzone.js"></script>-->
-<!--<link rel="stylesheet" href="/static/css/dropzone.css">-->
+
 </head>
 
   <body>
@@ -89,34 +83,14 @@ progress::-webkit-progress-value {
 
 </style>
 
-  <!--<div class="inner cover">-->
 
-
-      <!--<form id="upload-widget" method="POST" action="/upload/" class="dropzone">-->
-      <!--{% csrf_token %}-->
-      <!--</form>-->
-
-
-<!--&lt;!&ndash;<div class="inner cover">&ndash;&gt;-->
-
-
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
-<!--</br>-->
-
- <!--&lt;!&ndash;<form id="upload_form" enctype="multipart/form-data" method="post">&ndash;&gt;-->
-  <!--&lt;!&ndash;{% csrf_token %}&ndash;&gt;-->
-  <!--&lt;!&ndash;<div class="fileUpload btn btn-default btn-lg" id="but">&ndash;&gt;-->
-  <!--&lt;!&ndash;<input type="file" name="file" id="uploadFile" placeholder="Choose File">&ndash;&gt;-->
-  <!--&lt;!&ndash;<span class="glyphicon glyphicon-cloud-upload"></span>&ndash;&gt;-->
-   <!--&lt;!&ndash;Upload &amp; Analyze&ndash;&gt;-->
-  <!--&lt;!&ndash;</div>&ndash;&gt;-->
   <h4 id="status"></h4>
   <!--&lt;!&ndash;<progress id="progressBar" value="0" max="100" style="width:300px;visibility:hidden;" ></progress>&ndash;&gt;-->
 
 <!--&lt;!&ndash;</form>&ndash;&gt;-->
 <!--</div>-->
 
-              <form class="form-horizontal" action="/checklogin/" method="get">
+              <form class="form-horizontal" action="../check_login/" method="post">
                   {% csrf_token %}
                 <div class="control-group">
                     <label class="control-label" for="inputAccount">账&nbsp;&nbsp;号</label>
@@ -157,6 +131,32 @@ function abortHandler(event){
   _("status").innerHTML = "Upload Aborted!";
 }
 
+
+function input(){
+
+                $.ajax({
+                type:"POST",
+                url: '../check_login/',
+                headers: {
+                "X-CSRFToken": '{{ csrf_token }}',
+                },
+                data: {username:"xxx", password:"xxx"},
+                dataType:'json',
+                cache:false,
+                success: function(data) {
+                    if(data == 1 ){
+                        location.href = '/MobSF/index';
+                    }
+                    if(data == -1 || data == 0 ){
+                       $('#loginError').html('用户名不存在或者用户名密码不匹配').show();
+                    }
+                },
+                error: function() {
+                     $('#loginError').html('请求失败，请刷新页面后重试').show();
+                }
+            });
+
+}
 
 
 

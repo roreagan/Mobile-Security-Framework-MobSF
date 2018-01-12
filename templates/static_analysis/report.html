@@ -241,7 +241,9 @@
 
                                     <div role="tabpanel" class="tab-pane" id="dynamic_report">
 
+                                    <div id="modals">
 
+                                    </div>
                                     </div>
                                 </div>
 
@@ -258,6 +260,22 @@
 
      {% block js %}
     <script>
+
+        md5 = '{{md5}}';
+        html = '{{html}}';
+        html = html.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&amp;nbsp;/g, "&nbsp;");
+        $("#dynamic_report").append($(html));
+
+        modal = '{{modal}}';
+        modal = modal.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"')
+        $("#modals").append($(modal));
+
+        js = '{{js}}';
+        js = js.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+        eval(js);
+
+        Dynamic.action("test");
+
 
         function refreshTask(){
             $.ajax({
