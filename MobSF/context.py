@@ -6,19 +6,21 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-# engines_name = ["静态分析", "敏感数据硬编码", "数据库敏感数据泄露", "配置数据篡改检测", "资源文件篡改检测", "数据库文件篡改检测",
-#            "通信数据明文泄露检测", "加密证书锁定安全漏洞分析", "会话重放攻击检测", "会话超时攻击检测", "会话劫持安全漏洞分析",
-#            "短信DOS检测", "用户注册与登陆安全", "设备配网安全检测", "手机和云认证及通信加密检测", "手机和设备认证及通信加密检测",
-#            "设备和云认证及通信加密检测", "固件升级安全检测", "固件存储安全检测"]
+# engines_name = ["???????", "?????????????", "?????????????й?", "????????????", "???????????", "?????????????",
+#            "???????????й????", "?????????????????????", "???????????", "????????????", "??????????????",
+#            "????DOS???", "?????????????", "?豸??????????", "????????????????????", "??????豸?????????????",
+#            "?豸?????????????????", "?????????????", "????洢??????"]
 
 engines_name = ["Static", "Sensitive Data"]
 
 item_steps = [
     # can't locate package correctly before static analysis as reject to 'adb's
-    ['download', 'zip', 'dex2jar'],
+    ['download', 'zip', 'dex2jar', 'jdgui', 'openso'],
     ['adb-pull'],
     ['adb-pull']
 ]
+
+auto_steps = ['download', 'zip', 'dex2jar']
 
 
 dynamic_attr = [
@@ -72,6 +74,28 @@ def generate_row(engine, dynamic):
     return row.replace('\n', '')
 
 
+# type defines whether this step is manual of automatic
+# startOrEnd defines whether this step is end or start of the test
+def choose_modal(engine, step, type, end):
+    return '''<div class="modal fade" id="modal-test-''' + engine + '-' + str(step) + '''" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">''' + engines_name[int(engine)] + 'Project' + str(step + 1) + '''</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-3">''' + 'Use ' + item_steps[int(engine) - 1][step] + '''</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            ''' + (''''<button type="button" class="btn btn-primary" id="next-''' + engine + '-' + str(step) + '''" disabled="disabled">Next</button>''' if not end else '''<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>''') if type else "" + '''
+                        </div>
+                    </div>
+                </div>
+            </div>'''
+
+
 def generate_modal(engine):
     modal = ''' 
                 <div class="modal fade" id="modal-instruction-''' + engine + '''" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
@@ -93,40 +117,9 @@ def generate_modal(engine):
                 </div>
                 '''
     for i in range(len(item_steps[int(engine)-1]) - 1):
-        modal += '''<div class="modal fade" id="modal-test-''' + engine + '-' + str(i) + '''" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">''' + engines_name[int(engine)] + 'Project' + str(i+1) + '''</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-6 col-md-offset-3">''' + 'Use ' + item_steps[int(engine)-1][i] + '''</div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="next-''' + engine + '-' + str(i) + '''" disabled="disabled">Next</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>'''
-    modal += '''<div class="modal fade" id="modal-test-''' + engine + '-' + str(len(item_steps[int(engine)-1])-1) + '''" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">''' + engines_name[int(engine)] + 'Project' + str(len(item_steps[int(engine)-1])) + '''</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-6 col-md-offset-3">''' + 'Use' + item_steps[int(engine) - 1][len(item_steps[int(engine)-1])-1] + '''</div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>'''
+        modal += choose_modal(engine, i, item_steps[int(engine) - 1][i] in auto_steps, False)
+    modal += choose_modal(engine, len(item_steps[int(engine)-1])-1, item_steps[int(engine) - 1][len(item_steps[int(engine)-1]) - 1], True)
+
     return modal.replace('\n', '')
 
 
@@ -138,11 +131,6 @@ def generate_js(engine):
     
     $("#dynamic-start-''' + engine + '''").click(function () {
         $("#modal-test-''' + engine + '-0' + '''").modal({backdrop: 'static', keyboard: false});
-        Dynamic.''' + item_steps[int(engine) - 1][0] + '''(md5, function() {
-            if($("#next-''' + engine + '''-0") != null) {
-                $("#next-''' + engine + '''-0").removeAttr("disabled");
-            } 
-        });
     });
     '''
 
@@ -158,6 +146,24 @@ def generate_js(engine):
         });
     });
         '''
+
+    for i in range(len(item_steps[int(engine) - 1])):
+        js += '''
+        $("#modal-test-''' + engine + '-' + str(i) + '''").on('shown.bs.modal', function () {
+            Dynamic.''' + item_steps[int(engine) - 1][0] + '''(md5, function() {''' + ''' 
+            if($("#next-''' + engine + '''-0") != null) {
+                $("#next-''' + engine + '''-0").removeAttr("disabled");
+            } ''' if item_steps[int(engine) - 1][0] not in auto_steps else '''
+            $("#modal-test-''' + engine + '''-0").modal('toggle');
+            if($("#modal-test-''' + engine + '''-1") != null) {
+                $("#modal-test-''' + engine + '''-1").modal({backdrop: 'static', keyboard: false});
+                
+            }
+            ''' + '''
+        })
+        '''
+
+
     return js.replace('\n', '')
 
 

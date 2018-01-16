@@ -16,6 +16,7 @@ import tasks
 from wsgiref.util import FileWrapper
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import StreamingHttpResponse
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.utils import timezone
@@ -87,7 +88,8 @@ def index(request):
     """
     Index Route
     """
-    is_login = request.session.get('IS_LOGIN', False)
+    # is_login = request.session.get('IS_LOGIN', False)
+    is_login = True
     if is_login:
         username = request.session.get('USRNAME', False)
         return render(request, 'general/index_new.html', {'username': username, 'version': settings.MOBSF_VER})
@@ -601,6 +603,16 @@ def download(request):
     """
     Download from MobSF Route
     """
+
+    def readFile(filename, chunk_size=8192):
+        with open(filename, 'rb') as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+
     try:
         if request.method == 'GET':
             allowed_exts = settings.ALLOWED_EXTENSIONS
@@ -613,10 +625,15 @@ def download(request):
             if ext in allowed_exts:
                 dwd_file = os.path.join(settings.DWD_DIR, filename)
                 if os.path.isfile(dwd_file):
-                    wrapper = FileWrapper(file(dwd_file))
-                    response = HttpResponse(
-                        wrapper, content_type=allowed_exts[ext])
+                    # wrapper = FileWrapper(file(dwd_file))
+                    # response = HttpResponse(
+                    #     wrapper, content_type=allowed_exts[ext])
+                    # response['Content-Length'] = os.path.getsize(dwd_file)
+                    # return response
+                    response = StreamingHttpResponse(readFile(dwd_file))
+                    response['Content-Type'] = 'application/octet-stream'
                     response['Content-Length'] = os.path.getsize(dwd_file)
+                    response['Content-Disposition'] = 'attachment;filename="{0}"'.format(filename)
                     return response
     except:
         PrintException("Error Downloading File")

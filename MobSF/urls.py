@@ -19,7 +19,7 @@ from MobSF import utils
 
 urlpatterns = [
     # Examples:
-    url(r'^$', MobSF.views.login),
+    url(r'^$', MobSF.views.index),
     url(r'^login/$', MobSF.views.login),
     url(r'^loginVerify/$',MobSF.views.loginVerify),
     url(r'^logout/$', MobSF.views.logout, name='logout'),
