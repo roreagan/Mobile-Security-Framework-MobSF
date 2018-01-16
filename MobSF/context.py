@@ -17,10 +17,12 @@ item_steps = [
     # can't locate package correctly before static analysis as reject to 'adb's
     ['download', 'zip', 'dex2jar', 'jdgui', 'openso'],
     ['adb-pull'],
-    ['adb-pull']
+    ['adb-pull'],
+    ['apktool_d', 'change_adb', 'apktool_b', 'manual'],
+
 ]
 
-auto_steps = ['download', 'zip', 'dex2jar']
+auto_steps = ['download', 'zip', 'dex2jar', 'apktool_d', 'apktool_b']
 
 
 dynamic_attr = [
@@ -89,7 +91,7 @@ def choose_modal(engine, step, type, end):
                             </div>
                         </div>
                         <div class="modal-footer">
-                            ''' + (''''<button type="button" class="btn btn-primary" id="next-''' + engine + '-' + str(step) + '''" disabled="disabled">Next</button>''' if not end else '''<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>''') if type else "" + '''
+                            ''' + (('''<button type="button" class="btn btn-primary" id="next-''' + engine + '-' + str(step) + '''" disabled="disabled">Next</button>''' if not end else '''<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>''') if not type else "") + '''
                         </div>
                     </div>
                 </div>
@@ -118,7 +120,7 @@ def generate_modal(engine):
                 '''
     for i in range(len(item_steps[int(engine)-1]) - 1):
         modal += choose_modal(engine, i, item_steps[int(engine) - 1][i] in auto_steps, False)
-    modal += choose_modal(engine, len(item_steps[int(engine)-1])-1, item_steps[int(engine) - 1][len(item_steps[int(engine)-1]) - 1], True)
+    modal += choose_modal(engine, len(item_steps[int(engine)-1])-1, item_steps[int(engine) - 1][len(item_steps[int(engine)-1]) - 1] in auto_steps, True)
 
     return modal.replace('\n', '')
 
@@ -126,44 +128,42 @@ def generate_modal(engine):
 def generate_js(engine):
     js = '''
     $("#dynamic-instruction-''' + engine + '''").click(function () {
-        $("#modal-instruction-''' + engine + '''").modal('toggle');
+        $("#modal-instruction-''' + engine + '''").modal('show');
     });
     
     $("#dynamic-start-''' + engine + '''").click(function () {
-        $("#modal-test-''' + engine + '-0' + '''").modal({backdrop: 'static', keyboard: false});
+        $("#modal-test-''' + engine + '-0' + '''").modal({backdrop: 'static', keyboard: false, show: true});
     });
     '''
 
-    for i in range(len(item_steps[int(engine) - 1]) - 1):
+    for i in range(len(item_steps[int(engine) - 1])):
         js += '''
-    $("#next-''' + engine + '-' + str(i) + '''").click(function () {
-        $("#modal-test-''' + engine + '-' + str(i) + '''").modal('toggle');
-        $("#modal-test-''' + engine + '-' + str(i+1) + '''").modal({backdrop: 'static', keyboard: false});
-        Dynamic.''' + item_steps[int(engine) - 1][i+1] + '''(md5, function() {
-            if($("#next-''' + engine + '-' + str(i) + '''") != null) {
-                $("#next-''' + engine + '-' + str(i) + '''").removeAttr("disabled");
-            } 
-        });
-    });
+        if($("#next-''' + engine + '-' + str(i) + '''") != null) {
+            $("#next-''' + engine + '-' + str(i) + '''").click(function () {
+                $("#modal-test-''' + engine + '-' + str(i) + '''").modal('hide');
+                $("#modal-test-''' + engine + '-' + str(i+1) + '''").modal({backdrop: 'static', keyboard: false, show: true});
+
+            });
+        }
         '''
 
     for i in range(len(item_steps[int(engine) - 1])):
         js += '''
         $("#modal-test-''' + engine + '-' + str(i) + '''").on('shown.bs.modal', function () {
-            Dynamic.''' + item_steps[int(engine) - 1][0] + '''(md5, function() {''' + ''' 
-            if($("#next-''' + engine + '''-0") != null) {
-                $("#next-''' + engine + '''-0").removeAttr("disabled");
-            } ''' if item_steps[int(engine) - 1][0] not in auto_steps else '''
-            $("#modal-test-''' + engine + '''-0").modal('toggle');
-            if($("#modal-test-''' + engine + '''-1") != null) {
-                $("#modal-test-''' + engine + '''-1").modal({backdrop: 'static', keyboard: false});
-                
-            }
-            ''' + '''
-        })
+            Dynamic.''' + item_steps[int(engine) - 1][i] + '''(md5, function() {''' + ('''
+                if($("#next-''' + engine + "-" + str(i) + '''") != null) {
+                    $("#next-''' + engine + "-" + str(i) + '''").removeAttr("disabled");
+                } ''' if item_steps[int(engine) - 1][i] not in auto_steps else '''
+                $("#modal-test-''' + engine + "-" + str(i) + '''").modal('hide');
+                if($("#modal-test-''' + engine + "-" + str(i+1) + '''") != null) {
+                    $("#modal-test-''' + engine + "-" + str(i+1) + '''").modal({backdrop: 'static', keyboard: false, show: true});
+
+                }
+            ''') + '''
+            });
+            Dynamic.console("''' + item_steps[int(engine) - 1][i] + '''");
+        });
         '''
-
-
     return js.replace('\n', '')
 
 
